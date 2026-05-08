@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top-Down Pixel Shooter</title>
+    <title>Zombie Apocalypse</title>
     <style>
         body,
         html {
@@ -393,7 +393,7 @@
 
         <div id="menus">
             <div id="mainMenuScreen">
-                <h1 id="i18n-title" class="main-title">PIXEL SURVIVOR</h1>
+                <h1 id="i18n-title" class="main-title">Zombie Apocalypse</h1>
                 <p id="i18n-subtitle" class="main-subtitle">WASD to Move | Mouse to Aim & Shoot<br><span
                         style="color: #888; font-size: 14px;">(Click anywhere to enable audio)</span></p>
                 
@@ -553,7 +553,7 @@
             // --- I18N DICTIONARY ---
             const i18n = {
                 en: {
-                    title: "PIXEL SURVIVOR",
+                    title: "Zombie Apocalypse",
                     subtitle: "WASD to Move | Mouse to Aim & Shoot",
                     clickAudio: "(Click anywhere to enable audio)",
                     startBtn: "Start Game",
@@ -603,7 +603,7 @@
                     selectBtn: "SELECT"
                 },
                 el: {
-                    title: "ΕΠΙΖΩΝ ΠΙΞΕΛ",
+                    title: "ΑΠΟΚΑΛΥΨΗ ΖΟΜΠΙ",
                     subtitle: "WASD για κίνηση | Ποντίκι για στόχο/βολή",
                     clickAudio: "(Κάντε κλικ οπουδήποτε για ήχο)",
                     startBtn: "Εναρξη Παιχνιδιου",
@@ -868,9 +868,9 @@
             ];
 
             const ENEMY_DEFS = {
-                NORMAL: { speedBase: 100, health: 2, sizeMult: 4, damage: 10, score: 10, palette: { 4: '#d0021b', 5: '#7ed321' } },
-                FAST: { speedBase: 220, health: 1, sizeMult: 3, damage: 5, score: 15, palette: { 4: '#9013fe', 5: '#bd10e0' } },
-                TANK: { speedBase: 50, health: 12, sizeMult: 6, damage: 20, score: 30, palette: { 4: '#417505', 5: '#8b572a' } }
+                NORMAL: { speedBase: 100, health: 2, sizeMult: 4, damage: 10, score: 10, palette: { skin: '#7b8b6f', clothes: '#5a4d41', blood: '#8a0303' } },
+                FAST: { speedBase: 220, health: 1, sizeMult: 3, damage: 5, score: 15, palette: { skin: '#a0a5a9', clothes: '#2b2b2b', eyes: '#ff0000' } },
+                TANK: { speedBase: 50, health: 12, sizeMult: 6, damage: 20, score: 30, palette: { skin: '#4a5338', flesh: '#b03a2e', pants: '#1a3045' } }
             };
 
             const walls = [
@@ -1218,45 +1218,123 @@
                 ctx.restore();
             }
 
-            function drawEnemyCharacter(ctx, palette, sizeMult, walkTime, angle) {
+            function drawEnemyCharacter(ctx, typeKey, palette, sizeMult, walkTime, angle) {
                 const facingRight = Math.cos(angle) > 0;
-                const walkOffset = Math.sin(walkTime) * 6;
+                const baseWalkOffset = Math.sin(walkTime) * 6;
 
                 // Shadow
                 ctx.fillStyle = 'rgba(0,0,0,0.3)';
                 ctx.beginPath();
-                ctx.ellipse(0, sizeMult * 4, sizeMult * 3, sizeMult * 1.5, 0, 0, Math.PI * 2);
+                let shadowW = sizeMult * 3;
+                if (typeKey === 'TANK') shadowW = sizeMult * 4.5;
+                if (typeKey === 'FAST') shadowW = sizeMult * 2;
+                ctx.ellipse(0, sizeMult * 4, shadowW, sizeMult * 1.5, 0, 0, Math.PI * 2);
                 ctx.fill();
 
                 ctx.save();
                 if (!facingRight) ctx.scale(-1, 1);
 
-                const bodyColor = palette[4];
-                const detailColor = palette[5];
-
                 const w = sizeMult * 5;
                 const h = sizeMult * 6;
 
-                // Legs
-                ctx.fillStyle = '#111';
-                ctx.fillRect(-w / 3, h / 2 - 2 - walkOffset, w / 3, sizeMult * 2);
-                ctx.fillRect(w / 4, h / 2 - 2 + walkOffset, w / 3, sizeMult * 2);
+                if (typeKey === 'NORMAL') {
+                    // COMMON ZOMBIE (Limper)
+                    const limpWalk = Math.max(0, Math.sin(walkTime)) * 6; // Asymmetrical limp
+                    
+                    // Legs
+                    ctx.fillStyle = '#111';
+                    ctx.fillRect(-w / 3, h / 2 - 2 - limpWalk, w / 3, sizeMult * 2.5);
+                    ctx.fillRect(w / 4, h / 2 - 2 + baseWalkOffset*0.5, w / 3, sizeMult * 2);
 
-                // Body (Chunky block)
-                ctx.fillStyle = bodyColor;
-                ctx.fillRect(-w / 2, -h / 2, w, h);
+                    // Body
+                    ctx.fillStyle = palette.clothes;
+                    ctx.fillRect(-w / 2, -h / 2, w, h);
+                    
+                    // Exposed Ribs / Blood
+                    ctx.fillStyle = palette.blood;
+                    ctx.fillRect(-w/4, -h/4, w/2, h/2);
+                    ctx.fillStyle = '#dcdcdc'; // Bone
+                    ctx.fillRect(-w/4, -h/4 + 2, w/2 - 2, 2);
+                    ctx.fillRect(-w/4, -h/4 + 6, w/2 - 2, 2);
 
-                // Slime/Details (Hair/Brain area)
-                ctx.fillStyle = detailColor;
-                ctx.fillRect(-w / 2 - 2, -h / 2 - 4, w + 4, sizeMult * 2);
+                    // Arms (one reaching, one hanging)
+                    ctx.fillStyle = palette.skin;
+                    ctx.fillRect(w/2, -h/4 - limpWalk*0.5, w/2, sizeMult*1.5); // Reaching arm
+                    ctx.fillRect(-w/2 - sizeMult*1.5, 0, sizeMult*1.5, w/2); // Hanging arm
 
-                // Eyes (Facing Right)
-                ctx.fillStyle = '#fff';
-                ctx.fillRect(0, -h / 4, sizeMult * 1.5, sizeMult);
-                ctx.fillRect(sizeMult * 2, -h / 4, sizeMult * 1.5, sizeMult);
-                ctx.fillStyle = '#000';
-                ctx.fillRect(sizeMult * 0.5, -h / 4 + 1, sizeMult * 0.5, sizeMult * 0.5);
-                ctx.fillRect(sizeMult * 2.5, -h / 4 + 1, sizeMult * 0.5, sizeMult * 0.5);
+                    // Head
+                    ctx.fillRect(-w / 2 + 1, -h / 2 - sizeMult * 2.5, w - 2, sizeMult * 2.5);
+                    
+                    // Eyes
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(w/4, -h/2 - sizeMult*1.5, sizeMult, sizeMult);
+                    ctx.fillStyle = '#fff'; // One white eye
+                    ctx.fillRect(w/4+1, -h/2 - sizeMult*1.5+1, 1, 1);
+                    
+                } else if (typeKey === 'FAST') {
+                    // RUNNER ZOMBIE (Emaciated)
+                    const runOffset = Math.sin(walkTime * 1.5) * 8; // Faster, wider stride
+                    const lean = Math.PI / 8;
+                    
+                    ctx.rotate(lean); // Lean forward
+                    
+                    // Legs
+                    ctx.fillStyle = '#111';
+                    ctx.fillRect(-w/4 - runOffset, h/2 - 2, sizeMult*1.5, sizeMult * 3);
+                    ctx.fillRect(w/4 + runOffset, h/2 - 2, sizeMult*1.5, sizeMult * 3);
+
+                    // Body (Thin)
+                    ctx.fillStyle = palette.clothes;
+                    ctx.fillRect(-w / 3, -h / 2, w*0.66, h);
+
+                    // Arms (trailing behind)
+                    ctx.fillStyle = palette.skin;
+                    ctx.fillRect(-w/2 - sizeMult*2, -h/4, sizeMult*2, sizeMult*3); // Left arm
+                    ctx.fillRect(w/4, -h/4, sizeMult*1.5, sizeMult*2.5); // Right arm partly hidden
+
+                    // Head (Hunched out)
+                    ctx.fillRect(w/3, -h/2 - sizeMult*2, sizeMult*3, sizeMult*2);
+                    
+                    // Eyes (Glowing Red)
+                    ctx.fillStyle = palette.eyes;
+                    ctx.fillRect(w/3 + sizeMult*1.5, -h/2 - sizeMult*1.5, sizeMult, sizeMult*0.5);
+
+                } else if (typeKey === 'TANK') {
+                    // BRUTE ZOMBIE (Bloater)
+                    const heavyWalk = Math.sin(walkTime * 0.5) * 4; // Slow, heavy
+                    
+                    // Legs (Short, thick)
+                    ctx.fillStyle = palette.pants;
+                    ctx.fillRect(-w / 2, h / 2 - 2 - heavyWalk, w / 2, sizeMult * 1.5);
+                    ctx.fillRect(w / 4, h / 2 - 2 + heavyWalk, w / 2, sizeMult * 1.5);
+
+                    // Body (Massive)
+                    ctx.fillStyle = palette.skin;
+                    ctx.fillRect(-w * 0.8, -h * 0.6, w * 1.6, h * 1.2);
+                    
+                    // Pants top
+                    ctx.fillStyle = palette.pants;
+                    ctx.fillRect(-w * 0.8, h * 0.2, w * 1.6, h * 0.4);
+
+                    // Boils / Exposed Flesh
+                    ctx.fillStyle = palette.flesh;
+                    ctx.beginPath();
+                    ctx.arc(-w/3, -h/3, sizeMult*2, 0, Math.PI*2);
+                    ctx.arc(w/2, 0, sizeMult*1.5, 0, Math.PI*2);
+                    ctx.fill();
+
+                    // Arms (Thick, asymmetrical)
+                    ctx.fillStyle = palette.skin;
+                    ctx.fillRect(-w - sizeMult*2, -h/2, sizeMult*2.5, h); // Big left arm
+                    ctx.fillRect(w * 0.8, -h/4 - heavyWalk, sizeMult*2, h*0.8); // Right arm reaching
+
+                    // Head (Small, sunken)
+                    ctx.fillRect(-w/4, -h*0.8, w/2, sizeMult*2);
+                    
+                    // Eyes (Tiny)
+                    ctx.fillStyle = '#000';
+                    ctx.fillRect(w/8, -h*0.7, sizeMult*0.5, sizeMult*0.5);
+                }
 
                 ctx.restore();
             }
@@ -1427,6 +1505,7 @@
             class Enemy {
                 constructor(x, y, typeKey) {
                     this.x = x; this.y = y;
+                    this.typeKey = typeKey;
                     const def = ENEMY_DEFS[typeKey];
                     this.speed = def.speedBase + Math.random() * 50;
                     this.radius = def.sizeMult * 4;
@@ -1453,7 +1532,7 @@
                     ctx.save();
                     ctx.translate(this.x, this.y);
                     const walkTime = (this.x + this.y) * 0.05 + Date.now() / 100;
-                    drawEnemyCharacter(ctx, this.palette, this.sizeMult, walkTime, this.angle);
+                    drawEnemyCharacter(ctx, this.typeKey, this.palette, this.sizeMult, walkTime, this.angle);
                     ctx.restore();
                 }
             }
