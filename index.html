@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top-Down Pixel Shooter</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #1a1a1a;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        canvas {
+            display: block;
+            cursor: none;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            box-sizing: border-box;
+            color: white;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        #hud {
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #levelInfo {
+            color: #ffcc00;
+        }
+
+        #weaponInfo {
+            font-size: 20px;
+            text-align: center;
+            margin-right: 200px;
+        }
+
+        #notification {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            color: #ffcc00;
+            text-shadow: 2px 2px 0 #000;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+
+        #menus {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Let clicks pass through empty areas */
+        }
+        
+        .menu-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border: 4px solid #fff;
+            border-radius: 8px;
+            pointer-events: auto;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #ffcc00;
+            font-size: 48px;
+            text-transform: uppercase;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        button {
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.1s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background-color: #ffe680;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .btn-start-game {
+            position: absolute;
+            bottom: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 20px 60px;
+            font-size: 36px;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+            border: 4px solid #fff;
+            pointer-events: auto;
+        }
+        .btn-start-game:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .btn-top-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            margin-top: 0;
+            pointer-events: auto;
+        }
+
+        .btn-top-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            margin-top: 0;
+            pointer-events: auto;
+        }
+
+        .btn-bottom-right {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            margin-top: 0;
+            pointer-events: auto;
+        }
+
+        .main-title {
+            position: absolute;
+            top: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 72px;
+            text-shadow: 4px 4px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+            pointer-events: auto;
+            margin: 0;
+        }
+        
+        .main-subtitle {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-shadow: 2px 2px 0 #000;
+            text-align: center;
+            pointer-events: auto;
+            margin: 0;
+        }
+
+        /* --- Character Swap UI --- */
+        .char-swap-ui {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            pointer-events: auto;
+        }
+
+        .char-swap-btn {
+            background: rgba(0, 0, 0, 0.6);
+            color: #ffcc00;
+            border: 3px solid #ffcc00;
+            width: 50px;
+            height: 50px;
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            border-radius: 50%;
+        }
+
+        .char-swap-name {
+            font-size: 32px;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000;
+            width: 300px;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* --- Settings Sliders --- */
+        .settings-group {
+            margin: 16px 0;
+            text-align: left;
+        }
+
+        .settings-group label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .settings-group label .slider-icon {
+            font-size: 24px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .settings-group .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-group input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            flex: 1;
+            height: 8px;
+            background: #333;
+            border: 2px solid #555;
+            border-radius: 0;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .settings-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ffcc00;
+            border: 2px solid #000;
+            border-radius: 0;
+            cursor: pointer;
+        }
+
+        .settings-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ffcc00;
+            border: 2px solid #000;
+            border-radius: 0;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            font-size: 16px;
+            color: #ffcc00;
+            min-width: 40px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        /* --- Music Selection --- */
+        .music-select-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .music-select-label .slider-icon {
+            font-size: 24px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .music-track-list {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            border: 2px solid #555;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .music-track-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .music-track-list::-webkit-scrollbar-track {
+            background: #222;
+        }
+
+        .music-track-list::-webkit-scrollbar-thumb {
+            background: #ffcc00;
+        }
+
+        .music-track {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border-bottom: 1px solid #333;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .music-track:last-child {
+            border-bottom: none;
+        }
+
+        .music-track:hover {
+            background: rgba(255, 204, 0, 0.1);
+        }
+
+        .music-track.active {
+            background: rgba(255, 204, 0, 0.15);
+            color: #ffcc00;
+        }
+
+        .music-track .track-indicator {
+            width: 10px;
+            height: 10px;
+            border: 2px solid #555;
+            background: transparent;
+            flex-shrink: 0;
+        }
+
+        .music-track.active .track-indicator {
+            background: #ffcc00;
+            border-color: #ffcc00;
+        }
+
+        .music-track .track-name {
+            flex: 1;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+    <audio id="bgMusic" src="assets/audio/Strike_at_the_Mountain_Gate.mp3" loop preload="auto"></audio>
+
+    <div id="ui-layer">
+        <div id="hud" class="hidden">
+            <div><span id="i18n-scoreLabel">SCORE:</span> <span id="scoreDisplay">0</span></div>
+            <div id="levelInfo"><span id="i18n-levelLabel">LEVEL</span> <span id="levelDisplay">1</span> (<span
+                    id="enemiesRemainingDisplay">100</span> <span id="i18n-leftLabel">Left</span>)</div>
+            <div id="weaponInfo"><span id="i18n-weaponLabel">WEAPON:</span> <span id="weaponName">Pistol</span> <span
+                    id="weaponTimer"></span></div>
+        </div>
+
+        <div id="notification" class="hidden"></div>
+
+        <div id="menus">
+            <div id="mainMenuScreen">
+                <h1 id="i18n-title" class="main-title">PIXEL SURVIVOR</h1>
+                <p id="i18n-subtitle" class="main-subtitle">WASD to Move | Mouse to Aim & Shoot<br><span
+                        style="color: #888; font-size: 14px;">(Click anywhere to enable audio)</span></p>
+                
+                <div class="char-swap-ui">
+                    <button id="prevCharBtn" class="char-swap-btn">&lt;</button>
+                    <div id="charNameDisplay" class="char-swap-name">COMMANDO</div>
+                    <button id="nextCharBtn" class="char-swap-btn">&gt;</button>
+                </div>
+
+                <button id="startBtn" class="btn-start-game">Start Game</button>
+                <button id="highScoreBtn" class="btn-top-left">High Scores</button>
+                <button id="settingsBtn" class="btn-top-right">Settings</button>
+                <button id="creditsBtn" class="btn-bottom-right">Credits</button>
+            </div>
+
+            <div id="gameOverScreen" class="menu-panel hidden">
+                <h1 id="i18n-gameOverTitle" style="color: #d0021b;">GAME OVER</h1>
+                <p id="gameOverText"></p>
+                <button id="backToMenuBtn1" style="display: block; width: 100%;">Back to Main Menu</button>
+            </div>
+
+            <div id="levelTransitionScreen" class="menu-panel hidden">
+                <h1 id="i18n-levelCompleteTitle" style="color: #7ed321;">LEVEL COMPLETE!</h1>
+                <p id="i18n-hordeRecedes">The horde recedes... for now.</p>
+                <button id="nextLevelBtn" style="display: block; width: 100%;">Next Level</button>
+            </div>
+
+            <div id="gameWinScreen" class="menu-panel hidden">
+                <h1 id="i18n-youWonTitle" style="color: #f8e71c;">YOU WON!</h1>
+                <p id="gameWinText"></p>
+                <button id="backToMenuBtn5" style="display: block; width: 100%;">Back to Main Menu</button>
+            </div>
+
+            <div id="highScoreScreen" class="menu-panel hidden">
+                <h1 id="i18n-highScoresTitle">HIGH SCORES</h1>
+                <div id="highScoreList" style="font-size: 24px; margin-bottom: 20px; color: #ffcc00;"></div>
+                <button id="backToMenuBtn2" style="display: block; width: 100%;">Back</button>
+            </div>
+
+            <div id="settingsScreen" class="menu-panel hidden">
+                <h1 id="i18n-settingsTitle">SETTINGS</h1>
+
+                <div class="settings-group">
+                    <label><span class="slider-icon">🎵</span> <span id="i18n-musicVolLabel">Music Volume</span></label>
+                    <div class="slider-row">
+                        <input type="range" id="musicVolumeSlider" min="0" max="100" value="40">
+                        <span class="slider-value" id="musicVolumeValue">40</span>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <label><span class="slider-icon">🔊</span> <span id="i18n-sfxVolLabel">Sound FX</span></label>
+                    <div class="slider-row">
+                        <input type="range" id="sfxVolumeSlider" min="0" max="100" value="50">
+                        <span class="slider-value" id="sfxVolumeValue">50</span>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="music-select-label"><span class="slider-icon">🎶</span> <span id="i18n-musicSelectLabel">Music Track</span></div>
+                    <div class="music-track-list" id="musicTrackList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <button id="toggleLangBtn" style="display: block; width: 100%;">Language: English</button>
+                <button id="backToMenuBtn3" style="display: block; width: 100%;">Back</button>
+            </div>
+
+            <div id="creditsScreen" class="menu-panel hidden">
+                <h1 id="i18n-creditsTitle">CREDITS</h1>
+                <p id="i18n-creditsText" style="font-size: 24px;">Dimit Productions.<br>All Rights Reserved!</p>
+                <button id="backToMenuBtn4" style="display: block; width: 100%;">Back</button>
+            </div>
+
+            <div id="pauseScreen" class="menu-panel hidden">
+                <h1 id="i18n-pauseTitle" style="color: #4a90e2;">PAUSED</h1>
+                
+                <div class="settings-group">
+                    <label><span class="slider-icon">🎵</span> <span id="i18n-pauseMusicVolLabel">Music Volume</span></label>
+                    <div class="slider-row">
+                        <input type="range" id="pauseMusicVolumeSlider" min="0" max="100" value="40">
+                        <span class="slider-value" id="pauseMusicVolumeValue">40</span>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <label><span class="slider-icon">🔊</span> <span id="i18n-pauseSfxVolLabel">Sound FX</span></label>
+                    <div class="slider-row">
+                        <input type="range" id="pauseSfxVolumeSlider" min="0" max="100" value="50">
+                        <span class="slider-value" id="pauseSfxVolumeValue">50</span>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="music-select-label"><span class="slider-icon">🎶</span> <span id="i18n-pauseMusicSelectLabel">Music Track</span></div>
+                    <div class="music-track-list" id="pauseMusicTrackList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <button id="resumeBtn" style="display: block; width: 100%;">Resume Game</button>
+                <button id="abandonBtn" style="display: block; width: 100%;">Abandon Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = () => {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // UI Elements
+            const menus = document.getElementById('menus');
+            const hud = document.getElementById('hud');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const levelDisplay = document.getElementById('levelDisplay');
+            const enemiesRemainingDisplay = document.getElementById('enemiesRemainingDisplay');
+            const weaponNameUI = document.getElementById('weaponName');
+            const weaponTimerUI = document.getElementById('weaponTimer');
+            const notificationUI = document.getElementById('notification');
+
+            // Menu Screens & Buttons
+            const mainMenuScreen = document.getElementById('mainMenuScreen');
+            const gameOverScreen = document.getElementById('gameOverScreen');
+            const levelTransitionScreen = document.getElementById('levelTransitionScreen');
+            const gameWinScreen = document.getElementById('gameWinScreen');
+            const highScoreScreen = document.getElementById('highScoreScreen');
+            const settingsScreen = document.getElementById('settingsScreen');
+            const creditsScreen = document.getElementById('creditsScreen');
+            const pauseScreen = document.getElementById('pauseScreen');
+            const gameOverText = document.getElementById('gameOverText');
+            const gameWinText = document.getElementById('gameWinText');
+            const highScoreList = document.getElementById('highScoreList');
+
+            const startBtn = document.getElementById('startBtn');
+            const nextLevelBtn = document.getElementById('nextLevelBtn');
+            const highScoreBtn = document.getElementById('highScoreBtn');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const creditsBtn = document.getElementById('creditsBtn');
+            const toggleLangBtn = document.getElementById('toggleLangBtn');
+            const resumeBtn = document.getElementById('resumeBtn');
+            const abandonBtn = document.getElementById('abandonBtn');
+            
+            const prevCharBtn = document.getElementById('prevCharBtn');
+            const nextCharBtn = document.getElementById('nextCharBtn');
+            const charNameDisplay = document.getElementById('charNameDisplay');
+
+            const backToMenuBtns = [
+                document.getElementById('backToMenuBtn1'),
+                document.getElementById('backToMenuBtn2'),
+                document.getElementById('backToMenuBtn3'),
+                document.getElementById('backToMenuBtn4'),
+                document.getElementById('backToMenuBtn5')
+            ];
+
+            // --- I18N DICTIONARY ---
+            const i18n = {
+                en: {
+                    title: "PIXEL SURVIVOR",
+                    subtitle: "WASD to Move | Mouse to Aim & Shoot",
+                    clickAudio: "(Click anywhere to enable audio)",
+                    startBtn: "Start Game",
+                    highScoresBtn: "High Scores",
+                    settingsBtn: "Settings",
+                    creditsBtn: "Credits",
+                    gameOverTitle: "GAME OVER",
+                    survivedText: "You survived the horde.",
+                    finalScore: "Final Score:",
+                    backMenuBtn: "Back to Main Menu",
+                    levelCompleteTitle: "LEVEL COMPLETE!",
+                    hordeRecedes: "The horde recedes... for now.",
+                    nextLevelBtn: "Next Level",
+                    youWonTitle: "YOU WON!",
+                    clearedAll: "You cleared all levels!",
+                    highScoresTitle: "HIGH SCORES",
+                    noScores: "No scores yet!",
+                    backBtn: "Back",
+                    settingsTitle: "SETTINGS",
+                    musicVolLabel: "Music Volume",
+                    sfxVolLabel: "Sound FX",
+                    musicSelectLabel: "Music Track",
+                    langBtn: "Language: English",
+                    creditsTitle: "CREDITS",
+                    creditsText: "Dimit Productions.<br>All Rights Reserved!",
+                    pauseTitle: "PAUSED",
+                    resumeBtn: "Resume Game",
+                    abandonBtn: "Abandon Game",
+                    scoreHud: "SCORE:",
+                    levelHud: "LEVEL",
+                    leftHud: "Left",
+                    weaponHud: "WEAPON:",
+                    weapPistol: "Pistol",
+                    weapMG: "Machine Gun",
+                    weapSG: "Shotgun",
+                    itemBandage: "Bandage",
+                    itemPainkiller: "Painkillers",
+                    notifDefault: "Weapon returned to default.",
+                    notifEquipped: "EQUIPPED:",
+                    notifHealed: "HEALED:",
+                    pts: "PTS",
+                    charSelectTitle: "CHOOSE YOUR FIGHTER",
+                    char1Name: "COMMANDO",
+                    char1Desc: "Military veteran.<br>Tactical gear & beret.",
+                    char2Name: "STREET RUNNER",
+                    char2Desc: "Urban survivor.<br>Hoodie & sneakers.",
+                    selectBtn: "SELECT"
+                },
+                el: {
+                    title: "ΕΠΙΖΩΝ ΠΙΞΕΛ",
+                    subtitle: "WASD για κίνηση | Ποντίκι για στόχο/βολή",
+                    clickAudio: "(Κάντε κλικ οπουδήποτε για ήχο)",
+                    startBtn: "Εναρξη Παιχνιδιου",
+                    highScoresBtn: "Υψηλα Σκορ",
+                    settingsBtn: "Ρυθμισεις",
+                    creditsBtn: "Συντελεστες",
+                    gameOverTitle: "ΤΕΛΟΣ ΠΑΙΧΝΙΔΙΟΥ",
+                    survivedText: "Επέζησες από την ορδή.",
+                    finalScore: "Τελικό Σκορ:",
+                    backMenuBtn: "Επιστροφη στο Μενοy",
+                    levelCompleteTitle: "ΤΟ ΕΠΙΠΕΔΟ ΟΛΟΚΛΗΡΩΘΗΚΕ!",
+                    hordeRecedes: "Η ορδή υποχωρεί... προς το παρόν.",
+                    nextLevelBtn: "Επομενο Επιπεδο",
+                    youWonTitle: "ΚΕΡΔΙΣΕΣ!",
+                    clearedAll: "Ολοκλήρωσες όλα τα επίπεδα!",
+                    highScoresTitle: "ΥΨΗΛΑ ΣΚΟΡ",
+                    noScores: "Κανένα σκορ ακόμα!",
+                    backBtn: "Πισω",
+                    settingsTitle: "ΡΥΘΜΙΣΕΙΣ",
+                    musicVolLabel: "Ένταση Μουσικής",
+                    sfxVolLabel: "Ήχοι",
+                    musicSelectLabel: "Κομμάτι Μουσικής",
+                    langBtn: "Γλώσσα: Ελληνικά",
+                    creditsTitle: "ΣΥΝΤΕΛΕΣΤΕΣ",
+                    creditsText: "Dimit Productions.<br>Με επιφύλαξη παντός δικαιώματος!",
+                    pauseTitle: "ΠΑΥΣΗ",
+                    resumeBtn: "Συνεχεια",
+                    abandonBtn: "Εγκαταλειψη",
+                    scoreHud: "ΣΚΟΡ:",
+                    levelHud: "ΕΠΙΠΕΔΟ",
+                    leftHud: "Απομένουν",
+                    weaponHud: "ΟΠΛΟ:",
+                    weapPistol: "Πιστόλι",
+                    weapMG: "Πολυβόλο",
+                    weapSG: "Καραμπίνα",
+                    itemBandage: "Επίδεσμος",
+                    itemPainkiller: "Παυσίπονα",
+                    notifDefault: "Το όπλο επέστρεψε στο προεπιλεγμένο.",
+                    notifEquipped: "ΕΞΟΠΛΙΣΤΗΚΕ:",
+                    notifHealed: "ΘΕΡΑΠΕΥΤΗΚΕ:",
+                    pts: "ΠΟΝΤΟΙ",
+                    charSelectTitle: "ΔΙΑΛΕΞΕ ΤΟΝ ΜΑΧΗΤΗ ΣΟΥ",
+                    char1Name: "ΚΟΜΑΝΤΟ",
+                    char1Desc: "Βετεράνος στρατιώτης.<br>Τακτικός εξοπλισμός & μπερές.",
+                    char2Name: "ΔΡΟΜΕΑΣ",
+                    char2Desc: "Αστικός επιζών.<br>Φούτερ & αθλητικά.",
+                    selectBtn: "ΕΠΙΛΟΓΗ"
+                }
+            };
+
+            let currentLang = localStorage.getItem('pixelSurvivorLang') || 'en';
+
+            function applyLanguage() {
+                const t = i18n[currentLang];
+                document.getElementById('i18n-title').innerText = t.title;
+                document.getElementById('i18n-subtitle').innerHTML = `${t.subtitle}<br><span style="color: #888; font-size: 14px;">${t.clickAudio}</span>`;
+                startBtn.innerText = t.startBtn;
+                highScoreBtn.innerText = t.highScoresBtn;
+                settingsBtn.innerText = t.settingsBtn;
+                creditsBtn.innerText = t.creditsBtn;
+                document.getElementById('i18n-gameOverTitle').innerText = t.gameOverTitle;
+                document.getElementById('backToMenuBtn1').innerText = t.backMenuBtn;
+                document.getElementById('i18n-levelCompleteTitle').innerText = t.levelCompleteTitle;
+                document.getElementById('i18n-hordeRecedes').innerText = t.hordeRecedes;
+                nextLevelBtn.innerText = t.nextLevelBtn;
+                document.getElementById('i18n-youWonTitle').innerText = t.youWonTitle;
+                document.getElementById('backToMenuBtn5').innerText = t.backMenuBtn;
+                document.getElementById('i18n-highScoresTitle').innerText = t.highScoresTitle;
+                document.getElementById('backToMenuBtn2').innerText = t.backBtn;
+                document.getElementById('i18n-settingsTitle').innerText = t.settingsTitle;
+                document.getElementById('i18n-musicVolLabel').innerText = t.musicVolLabel;
+                document.getElementById('i18n-sfxVolLabel').innerText = t.sfxVolLabel;
+                document.getElementById('i18n-musicSelectLabel').innerText = t.musicSelectLabel;
+                document.getElementById('i18n-pauseMusicVolLabel').innerText = t.musicVolLabel;
+                document.getElementById('i18n-pauseSfxVolLabel').innerText = t.sfxVolLabel;
+                document.getElementById('i18n-pauseMusicSelectLabel').innerText = t.musicSelectLabel;
+                toggleLangBtn.innerText = t.langBtn;
+                document.getElementById('backToMenuBtn3').innerText = t.backBtn;
+                document.getElementById('i18n-creditsTitle').innerText = t.creditsTitle;
+                document.getElementById('i18n-creditsText').innerHTML = t.creditsText;
+                document.getElementById('backToMenuBtn4').innerText = t.backBtn;
+                document.getElementById('i18n-pauseTitle').innerText = t.pauseTitle;
+                resumeBtn.innerText = t.resumeBtn;
+                abandonBtn.innerText = t.abandonBtn;
+
+                if (typeof updateCharNameDisplay === 'function') {
+                    updateCharNameDisplay();
+                }
+
+                document.getElementById('i18n-scoreLabel').innerText = t.scoreHud;
+                document.getElementById('i18n-levelLabel').innerText = t.levelHud;
+                document.getElementById('i18n-leftLabel').innerText = t.leftHud;
+                document.getElementById('i18n-weaponLabel').innerText = t.weaponHud;
+
+                if (typeof player !== 'undefined' && player.weapon) {
+                    weaponNameUI.innerText = t[player.weapon.nameKey];
+                }
+
+                if (!isPlaying && !gameOverScreen.classList.contains('hidden')) {
+                    gameOverText.innerHTML = `${t.survivedText}<br>${t.finalScore} <strong>${score}</strong>`;
+                }
+                if (!isPlaying && !gameWinScreen.classList.contains('hidden')) {
+                    gameWinText.innerHTML = `${t.clearedAll}<br>${t.finalScore} <strong>${score}</strong>`;
+                }
+
+                if (!highScoreScreen.classList.contains('hidden')) {
+                    updateHighScoresList();
+                }
+            }
+
+            function updateHighScoresList() {
+                let highScores = JSON.parse(localStorage.getItem('pixelSurvivorScores') || '[]');
+                if (highScores.length === 0) {
+                    highScoreList.innerHTML = i18n[currentLang].noScores;
+                } else {
+                    highScoreList.innerHTML = highScores.map((s, i) => `${i + 1}. ${s} ${i18n[currentLang].pts}`).join('<br>');
+                }
+            }
+
+            // Disable smoothing for crisp pixel art look
+            ctx.imageSmoothingEnabled = false;
+
+            let width, height;
+            function resize() {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            // --- GAME STATE ---
+            let isPlaying = false;
+            let isPaused = false;
+            let score = 0;
+            let lastTime = 0;
+            let musicEnabled = true;
+            let musicVolume = 40;
+            let sfxVolume = 50;
+            let selectedCharacter = 1;
+
+            // --- MUSIC TRACKS ---
+            const MUSIC_TRACKS = [
+                { file: 'assets/audio/Strike_at_the_Mountain_Gate.mp3', name: 'Strike at the Mountain Gate' },
+                { file: 'assets/audio/One_Final_Strike.mp3', name: 'One Final Strike' }
+            ];
+            let currentTrackIdx = 0;
+
+            // Level State
+            let currentLevelIdx = 0;
+            let enemiesSpawned = 0;
+            let enemiesKilled = 0;
+            let gunsDropped = 0;
+            let healsDropped = 0;
+            let gunDropTimer = 0;
+            let healDropTimer = 0;
+            let spawnTimer = 0;
+
+            // --- AUDIO SYSTEM ---
+            const bgMusic = document.getElementById('bgMusic');
+            bgMusic.volume = musicVolume / 100;
+            let audioCtx;
+
+            let audioInitialized = false;
+            document.body.addEventListener('click', () => {
+                if (!audioInitialized) {
+                    initAudio();
+                    audioInitialized = true;
+                    if (musicVolume > 0) {
+                        bgMusic.play().catch(e => console.log("Audio play failed:", e));
+                    }
+                }
+            });
+
+            function initAudio() {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            }
+
+            // Simple SFX using Web Audio API to compliment the MP3 track
+            function playSFX(type) {
+                if (!audioCtx || sfxVolume === 0) return;
+                const vol = sfxVolume / 100;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+                if (type === 'shoot') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                    gain.gain.setValueAtTime(0.1 * vol, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'hit') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(50, now + 0.2);
+                    gain.gain.setValueAtTime(0.2 * vol, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                }
+            }
+
+            // --- INPUT HANDLING ---
+            const keys = { w: false, a: false, s: false, d: false };
+            const mouse = { x: width / 2, y: height / 2, isDown: false };
+
+            window.addEventListener('keydown', e => {
+                if (e.key.toLowerCase() in keys) keys[e.key.toLowerCase()] = true;
+
+                // Handle Pause key
+                if (e.code === 'Space') {
+                    e.preventDefault(); // Prevents page from scrolling down
+                    if (isPlaying) {
+                        if (isPaused) resumeGame();
+                        else pauseGame();
+                    }
+                }
+            });
+            window.addEventListener('keyup', e => {
+                if (e.key.toLowerCase() in keys) keys[e.key.toLowerCase()] = false;
+            });
+            window.addEventListener('mousemove', e => {
+                mouse.x = e.clientX;
+                mouse.y = e.clientY;
+            });
+            window.addEventListener('mousedown', e => {
+                if (e.button === 0) mouse.isDown = true;
+            });
+            window.addEventListener('mouseup', e => {
+                if (e.button === 0) mouse.isDown = false;
+            });
+
+            // --- PIXEL ART SPRITES (Generated via arrays) ---
+            const WORLD_WIDTH = 3000;
+            const WORLD_HEIGHT = 2000;
+
+            // --- GAME DATA STRUCTURES ---
+
+            const LEVELS = [
+                {
+                    id: 1, enemiesTotal: 100, gunDrops: 10, healDrops: 10, spawnInterval: 800,
+                    types: ['NORMAL']
+                },
+                {
+                    id: 2, enemiesTotal: 200, gunDrops: 8, healDrops: 8, spawnInterval: 600,
+                    types: ['NORMAL', 'NORMAL', 'FAST'] // 66% normal, 33% fast
+                },
+                {
+                    id: 3, enemiesTotal: 400, gunDrops: 6, healDrops: 6, spawnInterval: 400,
+                    types: ['NORMAL', 'FAST', 'FAST', 'TANK'] // 25% normal, 50% fast, 25% tank
+                }
+            ];
+
+            const ENEMY_DEFS = {
+                NORMAL: { speedBase: 100, health: 2, sizeMult: 4, damage: 10, score: 10, palette: { 4: '#d0021b', 5: '#7ed321' } },
+                FAST: { speedBase: 220, health: 1, sizeMult: 3, damage: 5, score: 15, palette: { 4: '#9013fe', 5: '#bd10e0' } },
+                TANK: { speedBase: 50, health: 12, sizeMult: 6, damage: 20, score: 30, palette: { 4: '#417505', 5: '#8b572a' } }
+            };
+
+            const walls = [
+                { x: 200, y: 200, w: 600, h: 40 }, { x: 200, y: 200, w: 40, h: 400 },
+                { x: 200, y: 600, w: 200, h: 40 }, { x: 600, y: 600, w: 240, h: 40 },
+                { x: 800, y: 200, w: 40, h: 440 }, { x: 1200, y: 800, w: 600, h: 40 },
+                { x: 1200, y: 1200, w: 600, h: 40 }, { x: 1200, y: 800, w: 40, h: 150 },
+                { x: 1200, y: 1050, w: 40, h: 190 }, { x: 1760, y: 800, w: 40, h: 440 },
+                { x: 2200, y: 1400, w: 600, h: 40 }, { x: 2200, y: 1400, w: 40, h: 400 },
+                { x: 2200, y: 1800, w: 200, h: 40 }, { x: 2600, y: 1800, w: 240, h: 40 },
+                { x: 2760, y: 1400, w: 40, h: 440 }, { x: 1000, y: 400, w: 100, h: 100 },
+                { x: 2000, y: 400, w: 100, h: 100 }, { x: 800, y: 1500, w: 200, h: 40 },
+                { x: 2500, y: 800, w: 40, h: 200 }
+            ];
+
+            const WEAPON_TYPES = {
+                DEFAULT: { id: 'DEFAULT', nameKey: 'weapPistol', fireRate: 0.15, spread: 0, bullets: 1, color: '#f8e71c', speed: 800 },
+                MACHINE_GUN: { id: 'MACHINE_GUN', nameKey: 'weapMG', fireRate: 0.08, spread: 0.15, bullets: 1, color: '#ffaa00', speed: 1000 },
+                SHOTGUN: { id: 'SHOTGUN', nameKey: 'weapSG', fireRate: 0.35, spread: 0.2, bullets: 3, color: '#ff4444', speed: 700 }
+            };
+
+            const PICKUP_TYPES = {
+                MACHINE_GUN: { id: 'MACHINE_GUN', type: 'weapon', weapon: WEAPON_TYPES.MACHINE_GUN, color: '#ffaa00' },
+                SHOTGUN: { id: 'SHOTGUN', type: 'weapon', weapon: WEAPON_TYPES.SHOTGUN, color: '#ff4444' },
+                BANDAGE: { id: 'BANDAGE', type: 'health', heal: 10, nameKey: 'itemBandage', color: '#fff' },     // Heals 0.5 heart (10 HP)
+                PAINKILLER: { id: 'PAINKILLER', type: 'health', heal: 20, nameKey: 'itemPainkiller', color: '#ff4444' } // Heals 1 heart (20 HP)
+            };
+
+            // Pickups (Guns and Health)
+            const mgSprite = [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+                [0, 0, 1, 1, 10, 10, 10, 10, 10, 10, 10, 10, 10, 1, 1, 0],
+                [0, 1, 10, 10, 10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ];
+            const sgSprite = [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 9, 9, 9, 1, 11, 11, 11, 11, 11, 11, 11, 1],
+                [0, 1, 9, 9, 9, 1, 1, 1, 11, 11, 11, 11, 11, 11, 11, 1],
+                [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ];
+            const pistolSprite = [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 1, 1, 1, 0],
+                [0, 1, 11, 11, 11, 11, 10, 1, 1],
+                [1, 9, 9, 1, 1, 1, 1, 1, 0],
+                [1, 9, 9, 1, 0, 0, 0, 0, 0],
+                [0, 1, 1, 0, 0, 0, 0, 0, 0]
+            ];
+            const bandageSprite = [
+                [0, 1, 1, 1, 1, 1, 1, 0], [1, 6, 6, 6, 6, 6, 6, 1], [1, 6, 6, 4, 6, 6, 6, 1], [1, 6, 4, 4, 4, 6, 6, 1],
+                [1, 6, 6, 4, 6, 6, 6, 1], [1, 6, 6, 6, 6, 6, 6, 1], [0, 1, 1, 1, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0]
+            ];
+            const painkillerSprite = [
+                [0, 0, 0, 1, 1, 0, 0, 0], [0, 0, 1, 4, 4, 1, 0, 0], [0, 1, 4, 4, 4, 4, 1, 0], [0, 1, 4, 4, 4, 4, 1, 0],
+                [0, 1, 6, 6, 6, 6, 1, 0], [0, 1, 6, 6, 6, 6, 1, 0], [0, 0, 1, 6, 6, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 0]
+            ];
+
+            // HP Hearts
+            const heartFullSprite = [
+                [0, 1, 1, 0, 0, 1, 1, 0], [1, 4, 4, 1, 1, 4, 4, 1], [1, 4, 4, 4, 4, 4, 4, 1], [1, 4, 4, 4, 4, 4, 4, 1],
+                [0, 1, 4, 4, 4, 4, 1, 0], [0, 0, 1, 4, 4, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]
+            ];
+            const heartHalfSprite = [
+                [0, 1, 1, 0, 0, 1, 1, 0], [1, 4, 4, 1, 1, 8, 8, 1], [1, 4, 4, 4, 8, 8, 8, 1], [1, 4, 4, 4, 8, 8, 8, 1],
+                [0, 1, 4, 4, 8, 8, 1, 0], [0, 0, 1, 4, 8, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]
+            ];
+            const heartEmptySprite = [
+                [0, 1, 1, 0, 0, 1, 1, 0], [1, 8, 8, 1, 1, 8, 8, 1], [1, 8, 8, 8, 8, 8, 8, 1], [1, 8, 8, 8, 8, 8, 8, 1],
+                [0, 1, 8, 8, 8, 8, 1, 0], [0, 0, 1, 8, 8, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0]
+            ];
+
+            // Colors mapper for basic sprites
+            const colors = {
+                0: 'transparent',
+                1: '#222', 2: '#4a90e2', 3: '#f5a623', 4: '#d0021b', 5: '#7ed321',
+                6: '#fff', 7: '#f8e71c', 8: '#333', 9: '#8b4513', 10: '#777', 11: '#ccc'
+            };
+
+            function drawSprite(ctx, sprite, x, y, size, paletteOverride = null) {
+                const offsetY = (sprite.length * size) / 2;
+                const offsetX = (sprite[0].length * size) / 2;
+                for (let row = 0; row < sprite.length; row++) {
+                    for (let col = 0; col < sprite[row].length; col++) {
+                        const colorIdx = sprite[row][col];
+                        if (colorIdx !== 0) {
+                            ctx.fillStyle = (paletteOverride && paletteOverride[colorIdx]) ? paletteOverride[colorIdx] : colors[colorIdx];
+                            ctx.fillRect(x - offsetX + col * size, y - offsetY + row * size, size, size);
+                        }
+                    }
+                }
+            }
+
+            // --- PHYSICS / COLLISION ---
+
+            function checkWallCollision(cx, cy, r) {
+                for (let w of walls) {
+                    let testX = cx; let testY = cy;
+                    if (cx < w.x) testX = w.x; else if (cx > w.x + w.w) testX = w.x + w.w;
+                    if (cy < w.y) testY = w.y; else if (cy > w.y + w.h) testY = w.y + w.h;
+                    let distX = cx - testX; let distY = cy - testY;
+                    if (Math.sqrt((distX * distX) + (distY * distY)) < r) return true;
+                }
+                return false;
+            }
+
+            function checkBulletWallCollision(x, y) {
+                for (let w of walls) {
+                    if (x >= w.x && x <= w.x + w.w && y >= w.y && y <= w.y + w.h) return true;
+                }
+                return false;
+            }
+
+            function showNotification(msg) {
+                notificationUI.innerText = msg;
+                notificationUI.classList.remove('hidden');
+                notificationUI.style.opacity = 1;
+                if (window.notifTimeout) clearTimeout(window.notifTimeout);
+                window.notifTimeout = setTimeout(() => { notificationUI.style.opacity = 0; }, 2000);
+            }
+
+            // --- 3/4 BRAWL STARS PERSPECTIVE RENDERERS ---
+
+            function drawPlayerCharacter(ctx, weaponId, walkTime, angle) {
+                const facingRight = Math.cos(angle) > 0;
+                const walkOffset = Math.sin(walkTime) * 6;
+
+                // Colors
+                const skinColor = '#e3a06f';
+                const vestColor = '#5c6b47';
+                const pantsColor = '#70644e';
+                const bootColor = '#3b2f2f';
+                const shirtColor = '#1a1a1a';
+                const redBand = '#d0021b';
+                const beretColor = '#4b5320';
+
+                // SHADOW
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, 18, 16, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // --- BODY (Upright) ---
+                ctx.save();
+                if (!facingRight) ctx.scale(-1, 1);
+
+                // Legs
+                ctx.fillStyle = pantsColor;
+                ctx.fillRect(-10, 4 - walkOffset, 8, 12); // Back Leg
+                ctx.fillStyle = bootColor;
+                ctx.fillRect(-12, 16 - walkOffset, 12, 6);
+
+                ctx.fillStyle = pantsColor;
+                ctx.fillRect(2, 4 + walkOffset, 8, 12);  // Front Leg
+                ctx.fillStyle = bootColor;
+                ctx.fillRect(0, 16 + walkOffset, 12, 6);
+
+                // Torso
+                ctx.fillStyle = shirtColor;
+                ctx.fillRect(-12, -10, 24, 18);
+                ctx.fillStyle = vestColor;
+                ctx.fillRect(-14, -10, 8, 18); // Back vest panel
+                ctx.fillRect(2, -10, 10, 18);  // Front vest panel
+
+                // Bandolier
+                ctx.save();
+                ctx.beginPath(); ctx.moveTo(-10, -10); ctx.lineTo(10, 8);
+                ctx.lineWidth = 4; ctx.strokeStyle = '#222'; ctx.stroke();
+                ctx.fillStyle = '#f8e71c';
+                for (let t = 0; t <= 1; t += 0.3) {
+                    let bx = -10 + (20 * t); let by = -10 + (18 * t);
+                    ctx.translate(bx, by); ctx.rotate(Math.PI / 4); ctx.fillRect(-1.5, -2, 3, 5); ctx.rotate(-Math.PI / 4); ctx.translate(-bx, -by);
+                }
+                ctx.restore();
+
+                // Head
+                ctx.fillStyle = skinColor;
+                ctx.fillRect(-10, -28, 20, 20);
+                ctx.fillStyle = 'rgba(0,0,0,0.15)'; // Stubble
+                ctx.fillRect(-10, -14, 20, 6);
+
+                // Eyes
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(2, -22, 5, 3);
+                ctx.fillRect(10, -22, 5, 3);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(4, -22, 2, 2);
+                ctx.fillRect(12, -22, 2, 2);
+
+                // Headband
+                ctx.fillStyle = redBand;
+                ctx.fillRect(-12, -26, 24, 4);
+                ctx.fillRect(-18, -26 + walkOffset * 0.5, 8, 4); // Tail
+
+                // Beret
+                ctx.fillStyle = beretColor;
+                ctx.fillRect(-14, -32, 28, 8);
+                ctx.fillRect(6, -28, 10, 4); // Flop over eye
+                ctx.fillStyle = '#f8e71c'; // Gold Badge
+                ctx.fillRect(2, -30, 4, 3);
+
+                ctx.restore();
+
+                // --- GUN AND ARMS ---
+                ctx.save();
+                ctx.translate(0, -6); // Move rotation point to upper chest
+                ctx.rotate(angle);
+                if (!facingRight) ctx.scale(1, -1); // Keep gun from turning upside down
+
+                // Gun Arm (Back arm)
+                ctx.fillStyle = skinColor;
+                ctx.fillRect(-6, -4, 16, 6);
+
+                // Gun
+                ctx.translate(16, 0);
+                if (weaponId === 'MACHINE_GUN') drawSprite(ctx, mgSprite, 0, 0, 2);
+                else if (weaponId === 'SHOTGUN') drawSprite(ctx, sgSprite, 0, 0, 2);
+                else drawSprite(ctx, pistolSprite, 0, 0, 2);
+
+                // Hand (Front hand over gun)
+                ctx.fillStyle = skinColor;
+                ctx.fillRect(2, -3, 6, 6);
+                ctx.fillStyle = '#333'; // Glove
+                ctx.fillRect(2, -3, 3, 6);
+
+                ctx.restore();
+            }
+
+            function drawPlayerCharacterAlt(ctx, weaponId, walkTime, angle) {
+                const facingRight = Math.cos(angle) > 0;
+                const walkOffset = Math.sin(walkTime) * 6;
+
+                // Colors - Urban Street style
+                const skinColor = '#c68642';
+                const hoodieColor = '#2563eb';
+                const jeansColor = '#1e3a5f';
+                const sneakerColor = '#e8e8e8';
+                const tshirtColor = '#ddd';
+                const bandanaColor = '#fff';
+                const hairColor = '#f5d442';
+
+                // SHADOW
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, 18, 16, 6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // --- BODY (Upright) ---
+                ctx.save();
+                if (!facingRight) ctx.scale(-1, 1);
+
+                // Legs
+                ctx.fillStyle = jeansColor;
+                ctx.fillRect(-10, 4 - walkOffset, 8, 12);
+                ctx.fillStyle = sneakerColor;
+                ctx.fillRect(-12, 16 - walkOffset, 12, 6);
+                ctx.fillStyle = '#555';
+                ctx.fillRect(-12, 20 - walkOffset, 12, 2);
+
+                ctx.fillStyle = jeansColor;
+                ctx.fillRect(2, 4 + walkOffset, 8, 12);
+                ctx.fillStyle = sneakerColor;
+                ctx.fillRect(0, 16 + walkOffset, 12, 6);
+                ctx.fillStyle = '#555';
+                ctx.fillRect(0, 20 + walkOffset, 12, 2);
+
+                // Torso - T-shirt base
+                ctx.fillStyle = tshirtColor;
+                ctx.fillRect(-12, -10, 24, 18);
+
+                // Hoodie (open front panels)
+                ctx.fillStyle = hoodieColor;
+                ctx.fillRect(-14, -10, 10, 18);
+                ctx.fillRect(4, -10, 10, 18);
+                // Hoodie collar
+                ctx.fillStyle = '#1d4ed8';
+                ctx.fillRect(-14, -12, 28, 4);
+
+                // Gold chain necklace
+                ctx.save();
+                ctx.strokeStyle = '#f8e71c';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(0, -2, 8, 0.3, Math.PI - 0.3);
+                ctx.stroke();
+                ctx.fillStyle = '#f8e71c';
+                ctx.fillRect(-2, 4, 4, 4);
+                ctx.restore();
+
+                // Head
+                ctx.fillStyle = skinColor;
+                ctx.fillRect(-10, -28, 20, 20);
+
+                // Eyes
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(2, -22, 5, 3);
+                ctx.fillRect(10, -22, 5, 3);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(4, -22, 2, 2);
+                ctx.fillRect(12, -22, 2, 2);
+
+                // Bandana
+                ctx.fillStyle = bandanaColor;
+                ctx.fillRect(-12, -26, 24, 4);
+                ctx.fillRect(-18, -26 + walkOffset * 0.5, 8, 4);
+
+                // Spiky Hair (blonde)
+                ctx.fillStyle = hairColor;
+                ctx.fillRect(-12, -34, 24, 8);
+                ctx.fillRect(-8, -38, 5, 6);
+                ctx.fillRect(0, -40, 5, 8);
+                ctx.fillRect(8, -37, 5, 5);
+                ctx.fillRect(-14, -32, 4, 4);
+                ctx.fillRect(14, -32, 4, 4);
+
+                ctx.restore();
+
+                // --- GUN AND ARMS ---
+                ctx.save();
+                ctx.translate(0, -6);
+                ctx.rotate(angle);
+                if (!facingRight) ctx.scale(1, -1);
+
+                // Gun Arm
+                ctx.fillStyle = skinColor;
+                ctx.fillRect(-6, -4, 16, 6);
+
+                // Gun
+                ctx.translate(16, 0);
+                if (weaponId === 'MACHINE_GUN') drawSprite(ctx, mgSprite, 0, 0, 2);
+                else if (weaponId === 'SHOTGUN') drawSprite(ctx, sgSprite, 0, 0, 2);
+                else drawSprite(ctx, pistolSprite, 0, 0, 2);
+
+                // Hand
+                ctx.fillStyle = skinColor;
+                ctx.fillRect(2, -3, 6, 6);
+                // Fingerless glove
+                ctx.fillStyle = '#222';
+                ctx.fillRect(2, -1, 3, 4);
+
+                ctx.restore();
+            }
+
+            function drawEnemyCharacter(ctx, palette, sizeMult, walkTime, angle) {
+                const facingRight = Math.cos(angle) > 0;
+                const walkOffset = Math.sin(walkTime) * 6;
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, sizeMult * 4, sizeMult * 3, sizeMult * 1.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.save();
+                if (!facingRight) ctx.scale(-1, 1);
+
+                const bodyColor = palette[4];
+                const detailColor = palette[5];
+
+                const w = sizeMult * 5;
+                const h = sizeMult * 6;
+
+                // Legs
+                ctx.fillStyle = '#111';
+                ctx.fillRect(-w / 3, h / 2 - 2 - walkOffset, w / 3, sizeMult * 2);
+                ctx.fillRect(w / 4, h / 2 - 2 + walkOffset, w / 3, sizeMult * 2);
+
+                // Body (Chunky block)
+                ctx.fillStyle = bodyColor;
+                ctx.fillRect(-w / 2, -h / 2, w, h);
+
+                // Slime/Details (Hair/Brain area)
+                ctx.fillStyle = detailColor;
+                ctx.fillRect(-w / 2 - 2, -h / 2 - 4, w + 4, sizeMult * 2);
+
+                // Eyes (Facing Right)
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, -h / 4, sizeMult * 1.5, sizeMult);
+                ctx.fillRect(sizeMult * 2, -h / 4, sizeMult * 1.5, sizeMult);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(sizeMult * 0.5, -h / 4 + 1, sizeMult * 0.5, sizeMult * 0.5);
+                ctx.fillRect(sizeMult * 2.5, -h / 4 + 1, sizeMult * 0.5, sizeMult * 0.5);
+
+                ctx.restore();
+            }
+
+            // --- ENVIRONMENT RENDERERS ---
+
+            function drawFloor(ctx) {
+                ctx.fillStyle = '#e8cfa6'; // Desert sand color (Brawl Stars vibe)
+                ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+                const gridSize = 100;
+                ctx.strokeStyle = '#d4b685';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let x = 0; x <= WORLD_WIDTH; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, WORLD_HEIGHT); }
+                for (let y = 0; y <= WORLD_HEIGHT; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(WORLD_WIDTH, y); }
+                ctx.stroke();
+            }
+
+            function drawWall(ctx, w) {
+                const z = 40; // Height/Depth of wall
+
+                // Shadow on floor
+                ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                ctx.fillRect(w.x, w.y + w.h, w.w, 15);
+
+                // Front Face (Wooden crate color)
+                ctx.fillStyle = '#b87c4c';
+                ctx.fillRect(w.x, w.y + w.h - z, w.w, z);
+
+                // Top Face
+                ctx.fillStyle = '#d49b6a';
+                ctx.fillRect(w.x, w.y - z, w.w, w.h);
+
+                // Outlines
+                ctx.strokeStyle = '#5c3a21';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(w.x, w.y + w.h - z, w.w, z); // front outline
+                ctx.strokeRect(w.x, w.y - z, w.w, w.h);     // top outline
+
+                // Vertical Planks detail on front
+                ctx.beginPath();
+                for (let px = w.x + 20; px < w.x + w.w; px += 20) {
+                    ctx.moveTo(px, w.y + w.h - z);
+                    ctx.lineTo(px, w.y + w.h);
+                }
+                ctx.stroke();
+            }
+
+            // --- CLASSES ---
+
+            class Camera {
+                constructor() { this.x = 0; this.y = 0; }
+                update(target) {
+                    this.x += (target.x - width / 2 - this.x) * 0.1;
+                    this.y += (target.y - height / 2 - this.y) * 0.1;
+                }
+            }
+
+            class Player {
+                constructor(x, y) {
+                    this.x = x; this.y = y;
+                    this.speed = 300; this.angle = 0; this.radius = 16;
+
+                    this.maxHealth = 100;
+                    this.health = 100;
+                    this.fireCooldown = 0;
+                    this.weapon = WEAPON_TYPES.DEFAULT;
+                    this.powerupTimer = 0;
+                    this.walkTime = 0;
+                }
+
+                update(dt) {
+                    if (this.powerupTimer > 0) {
+                        this.powerupTimer -= dt;
+                        if (this.powerupTimer <= 0) {
+                            this.weapon = WEAPON_TYPES.DEFAULT;
+                            this.powerupTimer = 0;
+                            showNotification(i18n[currentLang].notifDefault);
+                        }
+                    }
+
+                    let dx = 0; let dy = 0;
+                    if (keys.w) dy -= 1; if (keys.s) dy += 1;
+                    if (keys.a) dx -= 1; if (keys.d) dx += 1;
+
+                    if (dx !== 0 && dy !== 0) {
+                        const l = Math.sqrt(dx * dx + dy * dy);
+                        dx /= l; dy /= l;
+                        this.walkTime += 15 * dt;
+                    } else if (dx !== 0 || dy !== 0) {
+                        this.walkTime += 15 * dt;
+                    } else {
+                        this.walkTime = 0;
+                    }
+
+                    let moveX = dx * this.speed * dt;
+                    let moveY = dy * this.speed * dt;
+                    if (!checkWallCollision(this.x + moveX, this.y, this.radius)) this.x += moveX;
+                    if (!checkWallCollision(this.x, this.y + moveY, this.radius)) this.y += moveY;
+
+                    this.x = Math.max(this.radius, Math.min(WORLD_WIDTH - this.radius, this.x));
+                    this.y = Math.max(this.radius, Math.min(WORLD_HEIGHT - this.radius, this.y));
+
+                    const worldMouseX = mouse.x + camera.x;
+                    const worldMouseY = mouse.y + camera.y;
+                    this.angle = Math.atan2(worldMouseY - this.y, worldMouseX - this.x);
+
+                    if (this.fireCooldown > 0) this.fireCooldown -= dt;
+                    if (mouse.isDown && this.fireCooldown <= 0) {
+                        this.shoot();
+                        this.fireCooldown = this.weapon.fireRate;
+                    }
+                }
+
+                shoot() {
+                    playSFX('shoot');
+                    const gunDist = 30;
+                    const gunX = this.x + Math.cos(this.angle) * gunDist;
+                    const gunY = this.y - 6 + Math.sin(this.angle) * gunDist; // Adjust height for upright body
+
+                    let w = this.weapon;
+                    for (let i = 0; i < w.bullets; i++) {
+                        let angleOffset = 0;
+                        if (w.bullets > 1) angleOffset = (i - Math.floor(w.bullets / 2)) * w.spread;
+                        else if (w.spread > 0) angleOffset = (Math.random() - 0.5) * w.spread;
+                        bullets.push(new Bullet(gunX, gunY, this.angle + angleOffset, w));
+                    }
+                    camera.x += Math.cos(this.angle + Math.PI) * 5;
+                    camera.y += Math.sin(this.angle + Math.PI) * 5;
+                }
+
+                draw(ctx) {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    if (selectedCharacter === 2) {
+                        drawPlayerCharacterAlt(ctx, this.weapon.id, this.walkTime, this.angle);
+                    } else {
+                        drawPlayerCharacter(ctx, this.weapon.id, this.walkTime, this.angle);
+                    }
+                    ctx.restore();
+                }
+            }
+
+            class Bullet {
+                constructor(x, y, angle, weaponDef) {
+                    this.x = x; this.y = y; this.angle = angle;
+                    this.speed = weaponDef.speed; this.color = weaponDef.color;
+                    this.radius = 4; this.life = 1.5; this.markedForDeletion = false;
+                }
+                update(dt) {
+                    this.x += Math.cos(this.angle) * this.speed * dt;
+                    this.y += Math.sin(this.angle) * this.speed * dt;
+                    this.life -= dt;
+                    if (this.life <= 0) this.markedForDeletion = true;
+                }
+                draw(ctx) {
+                    ctx.save();
+                    ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)'; // Bullet shadow
+                    ctx.fillRect(-6, 8, 12, 4);
+                    ctx.fillStyle = this.color; ctx.fillRect(-6, -2, 12, 4);
+                    ctx.fillStyle = '#fff'; ctx.fillRect(-2, -1, 6, 2);
+                    ctx.restore();
+                }
+            }
+
+            class Enemy {
+                constructor(x, y, typeKey) {
+                    this.x = x; this.y = y;
+                    const def = ENEMY_DEFS[typeKey];
+                    this.speed = def.speedBase + Math.random() * 50;
+                    this.radius = def.sizeMult * 4;
+                    this.health = def.health;
+                    this.damage = def.damage;
+                    this.scoreValue = def.score;
+                    this.palette = def.palette;
+                    this.sizeMult = def.sizeMult;
+                    this.markedForDeletion = false;
+                    this.angle = 0; this.wobbleOffset = Math.random() * Math.PI * 2;
+                }
+                update(dt, target) {
+                    const dx = target.x - this.x; const dy = target.y - this.y;
+                    this.angle = Math.atan2(dy, dx);
+                    const wobble = Math.sin(Date.now() / 100 + this.wobbleOffset) * 0.5;
+                    let moveX = Math.cos(this.angle + wobble) * this.speed * dt;
+                    let moveY = Math.sin(this.angle + wobble) * this.speed * dt;
+                    if (!checkWallCollision(this.x + moveX, this.y, this.radius)) this.x += moveX;
+                    if (!checkWallCollision(this.x, this.y + moveY, this.radius)) this.y += moveY;
+                    this.x = Math.max(this.radius, Math.min(WORLD_WIDTH - this.radius, this.x));
+                    this.y = Math.max(this.radius, Math.min(WORLD_HEIGHT - this.radius, this.y));
+                }
+                draw(ctx) {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    const walkTime = (this.x + this.y) * 0.05 + Date.now() / 100;
+                    drawEnemyCharacter(ctx, this.palette, this.sizeMult, walkTime, this.angle);
+                    ctx.restore();
+                }
+            }
+
+            class Particle {
+                constructor(x, y, color) {
+                    this.x = x; this.y = y; this.color = color;
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 50 + Math.random() * 150;
+                    this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
+                    this.life = 0.5 + Math.random() * 0.5; this.maxLife = this.life;
+                    this.size = 2 + Math.random() * 6; this.markedForDeletion = false;
+                }
+                update(dt) {
+                    this.x += this.vx * dt; this.y += this.vy * dt;
+                    this.vx *= 0.95; this.vy *= 0.95; this.life -= dt;
+                    if (this.life <= 0) this.markedForDeletion = true;
+                }
+                draw(ctx) {
+                    ctx.globalAlpha = Math.max(0, this.life / this.maxLife);
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+                    ctx.globalAlpha = 1;
+                }
+            }
+
+            class Pickup {
+                constructor(x, y, pickupDef) {
+                    this.x = x; this.y = y; this.def = pickupDef;
+                    this.radius = 20; this.bounce = 0; this.markedForDeletion = false;
+                }
+                update(dt) { this.bounce += dt * 5; }
+                draw(ctx) {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+
+                    // Shadow
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                    ctx.beginPath(); ctx.ellipse(0, 8, 12, 4, 0, 0, Math.PI * 2); ctx.fill();
+
+                    const floatY = Math.sin(this.bounce) * 5 - 10;
+                    ctx.translate(0, floatY);
+
+                    // Glowing Aura
+                    ctx.fillStyle = this.def.color;
+                    ctx.globalAlpha = 0.3;
+                    ctx.beginPath(); ctx.arc(0, 0, 20, 0, Math.PI * 2); ctx.fill();
+                    ctx.globalAlpha = 1;
+
+                    // Draw Specific Graphic
+                    let sprite, size;
+                    if (this.def.id === 'MACHINE_GUN') { sprite = mgSprite; size = 2.5; }
+                    else if (this.def.id === 'SHOTGUN') { sprite = sgSprite; size = 2.5; }
+                    else if (this.def.id === 'BANDAGE') { sprite = bandageSprite; size = 3; }
+                    else if (this.def.id === 'PAINKILLER') { sprite = painkillerSprite; size = 3; }
+
+                    if (sprite) drawSprite(ctx, sprite, 0, 0, size);
+
+                    ctx.restore();
+                }
+            }
+
+            // --- GAME VARIABLES ---
+            let player;
+            let camera;
+            let bullets = [];
+            let enemies = [];
+            let particles = [];
+            let pickups = [];
+
+            function initGame() {
+                if (!audioInitialized && musicEnabled) { initAudio(); audioInitialized = true; }
+                noteIdx = 0;
+                player = new Player(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
+                camera = new Camera();
+                score = 0;
+                currentLevelIdx = 0;
+                isPaused = false;
+
+                startLevel();
+
+                menus.classList.add('hidden');
+                notificationUI.classList.add('hidden');
+                hud.classList.remove('hidden');
+                isPlaying = true;
+                lastTime = performance.now();
+                requestAnimationFrame(gameLoop);
+            }
+
+            function startLevel() {
+                camera.x = player.x - width / 2; camera.y = player.y - height / 2;
+                bullets = []; enemies = []; particles = []; pickups = [];
+
+                enemiesSpawned = 0;
+                enemiesKilled = 0;
+                gunsDropped = 0;
+                healsDropped = 0;
+                gunDropTimer = 0;
+                healDropTimer = 0;
+                spawnTimer = 0;
+
+                levelDisplay.innerText = LEVELS[currentLevelIdx].id;
+                enemiesRemainingDisplay.innerText = LEVELS[currentLevelIdx].enemiesTotal;
+                scoreDisplay.innerText = score;
+
+                spawnPickup('weapon');
+                spawnPickup('health');
+                gunsDropped++;
+                healsDropped++;
+            }
+
+            function spawnPickup(category) {
+                let x, y, attempts = 0;
+                do {
+                    x = Math.random() * (WORLD_WIDTH - 100) + 50;
+                    y = Math.random() * (WORLD_HEIGHT - 100) + 50;
+                    attempts++;
+                } while (checkWallCollision(x, y, 20) && attempts < 50);
+
+                let type;
+                if (category === 'weapon') {
+                    type = Math.random() > 0.5 ? PICKUP_TYPES.MACHINE_GUN : PICKUP_TYPES.SHOTGUN;
+                } else {
+                    type = Math.random() > 0.5 ? PICKUP_TYPES.BANDAGE : PICKUP_TYPES.PAINKILLER;
+                }
+
+                pickups.push(new Pickup(x, y, type));
+            }
+
+            function spawnEnemy() {
+                const levelData = LEVELS[currentLevelIdx];
+                const spawnDist = Math.max(width, height) / 2 + 100;
+                let x, y, attempts = 0;
+
+                do {
+                    const angle = Math.random() * Math.PI * 2;
+                    x = player.x + Math.cos(angle) * spawnDist;
+                    y = player.y + Math.sin(angle) * spawnDist;
+                    x = Math.max(0, Math.min(WORLD_WIDTH, x));
+                    y = Math.max(0, Math.min(WORLD_HEIGHT, y));
+                    attempts++;
+                } while (checkWallCollision(x, y, 16) && attempts < 10);
+
+                if (!checkWallCollision(x, y, 16)) {
+                    const typeKey = levelData.types[Math.floor(Math.random() * levelData.types.length)];
+                    enemies.push(new Enemy(x, y, typeKey));
+                    return true;
+                }
+                return false;
+            }
+
+            function createExplosion(x, y, colorStr, count) {
+                playSFX('hit');
+                for (let i = 0; i < count; i++) particles.push(new Particle(x, y, colorStr));
+            }
+
+            function gameOver() {
+                isPlaying = false;
+                hud.classList.add('hidden');
+                menus.classList.remove('hidden');
+                showScreen(gameOverScreen);
+                gameOverText.innerHTML = `${i18n[currentLang].survivedText}<br>${i18n[currentLang].finalScore} <strong>${score}</strong>`;
+
+                let highScores = JSON.parse(localStorage.getItem('pixelSurvivorScores') || '[]');
+                highScores.push(score);
+                highScores.sort((a, b) => b - a);
+                highScores = highScores.slice(0, 5);
+                localStorage.setItem('pixelSurvivorScores', JSON.stringify(highScores));
+
+                requestAnimationFrame(menuLoop);
+            }
+
+            function levelComplete() {
+                isPlaying = false;
+                hud.classList.add('hidden');
+                menus.classList.remove('hidden');
+
+                if (currentLevelIdx + 1 < LEVELS.length) {
+                    showScreen(levelTransitionScreen);
+                } else {
+                    showScreen(gameWinScreen);
+                    gameWinText.innerHTML = `${i18n[currentLang].clearedAll}<br>${i18n[currentLang].finalScore} <strong>${score}</strong>`;
+
+                    let highScores = JSON.parse(localStorage.getItem('pixelSurvivorScores') || '[]');
+                    highScores.push(score);
+                    highScores.sort((a, b) => b - a);
+                    highScores = highScores.slice(0, 5);
+                    localStorage.setItem('pixelSurvivorScores', JSON.stringify(highScores));
+                }
+
+                requestAnimationFrame(menuLoop);
+            }
+
+            function update(dt) {
+                player.update(dt);
+                camera.update(player);
+
+                const currentLevel = LEVELS[currentLevelIdx];
+
+                weaponNameUI.innerText = i18n[currentLang][player.weapon.nameKey];
+                weaponNameUI.style.color = player.weapon.color;
+                weaponTimerUI.innerText = player.powerupTimer > 0 ? `(${Math.ceil(player.powerupTimer)}s)` : "";
+
+                if (enemiesSpawned < currentLevel.enemiesTotal) {
+                    spawnTimer += dt * 1000;
+                    if (spawnTimer >= currentLevel.spawnInterval) {
+                        if (spawnEnemy()) enemiesSpawned++;
+                        spawnTimer = 0;
+                    }
+                }
+
+                gunDropTimer += dt;
+                healDropTimer += dt;
+
+                if (gunDropTimer >= 15 && gunsDropped < currentLevel.gunDrops) {
+                    spawnPickup('weapon'); gunsDropped++; gunDropTimer = 0;
+                }
+
+                if (healDropTimer >= 20 && healsDropped < currentLevel.healDrops) {
+                    spawnPickup('health'); healsDropped++; healDropTimer = 0;
+                }
+
+                pickups.forEach(drop => {
+                    drop.update(dt);
+                    const dist = Math.hypot(player.x - drop.x, player.y - drop.y);
+                    if (dist < player.radius + drop.radius) {
+                        if (drop.def.type === 'weapon') {
+                            player.weapon = drop.def.weapon;
+                            player.powerupTimer = 60;
+                            showNotification(`${i18n[currentLang].notifEquipped} ${i18n[currentLang][drop.def.weapon.nameKey].toUpperCase()}!`);
+                            drop.markedForDeletion = true;
+                        } else if (drop.def.type === 'health') {
+                            if (player.health < player.maxHealth) {
+                                player.health = Math.min(player.maxHealth, player.health + drop.def.heal);
+                                showNotification(`${i18n[currentLang].notifHealed} ${i18n[currentLang][drop.def.nameKey].toUpperCase()}`);
+                                drop.markedForDeletion = true;
+                                createExplosion(player.x, player.y, '#fff', 5);
+                            }
+                        }
+                    }
+                });
+
+                bullets.forEach(b => {
+                    b.update(dt);
+                    if (checkBulletWallCollision(b.x, b.y)) {
+                        b.markedForDeletion = true;
+                        createExplosion(b.x, b.y, '#555', 3);
+                    }
+                });
+
+                enemies.forEach(enemy => {
+                    enemy.update(dt, player);
+
+                    const distToPlayer = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+                    if (distToPlayer < player.radius + enemy.radius) {
+                        player.health -= enemy.damage;
+                        enemy.markedForDeletion = true;
+                        enemiesKilled++;
+                        createExplosion(player.x, player.y, colors[4], 10);
+
+                        camera.x += (Math.random() - 0.5) * 30;
+                        camera.y += (Math.random() - 0.5) * 30;
+
+                        if (player.health <= 0) {
+                            gameOver();
+                        } else if (enemiesKilled >= currentLevel.enemiesTotal) {
+                            levelComplete();
+                        }
+                        enemiesRemainingDisplay.innerText = Math.max(0, currentLevel.enemiesTotal - enemiesKilled);
+                    }
+
+                    bullets.forEach(bullet => {
+                        if (bullet.markedForDeletion) return;
+                        const distToBullet = Math.hypot(bullet.x - enemy.x, bullet.y - enemy.y);
+                        if (distToBullet < enemy.radius + bullet.radius) {
+                            bullet.markedForDeletion = true;
+                            enemy.health -= 1;
+                            createExplosion(enemy.x, enemy.y, enemy.palette[5], 5);
+                            if (enemy.health <= 0) {
+                                enemy.markedForDeletion = true;
+                                score += enemy.scoreValue;
+                                enemiesKilled++;
+                                scoreDisplay.innerText = score;
+                                enemiesRemainingDisplay.innerText = Math.max(0, currentLevel.enemiesTotal - enemiesKilled);
+                                createExplosion(enemy.x, enemy.y, enemy.palette[4], 15);
+
+                                if (enemiesKilled >= currentLevel.enemiesTotal) {
+                                    levelComplete();
+                                }
+                            }
+                        }
+                    });
+                });
+
+                particles.forEach(p => p.update(dt));
+
+                bullets = bullets.filter(b => !b.markedForDeletion);
+                enemies = enemies.filter(e => !e.markedForDeletion);
+                particles = particles.filter(p => !p.markedForDeletion);
+                pickups = pickups.filter(w => !w.markedForDeletion);
+            }
+
+            function drawMinimap(ctx) {
+                if (!isPlaying) return;
+                const mmWidth = 150; const mmHeight = (WORLD_HEIGHT / WORLD_WIDTH) * mmWidth;
+                const padding = 20; const startX = width - mmWidth - padding; const startY = padding;
+
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.6)'; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+                ctx.fillRect(startX, startY, mmWidth, mmHeight); ctx.strokeRect(startX, startY, mmWidth, mmHeight);
+
+                const scaleX = mmWidth / WORLD_WIDTH; const scaleY = mmHeight / WORLD_HEIGHT;
+
+                ctx.fillStyle = 'rgba(100, 100, 100, 0.8)';
+                walls.forEach(w => { ctx.fillRect(startX + w.x * scaleX, startY + w.y * scaleY, w.w * scaleX, w.h * scaleY); });
+
+                pickups.forEach(w => {
+                    ctx.fillStyle = w.def.color; ctx.fillRect(startX + w.x * scaleX - 2, startY + w.y * scaleY - 2, 4, 4);
+                });
+
+                ctx.fillStyle = colors[4];
+                enemies.forEach(e => { ctx.fillRect(startX + e.x * scaleX - 1.5, startY + e.y * scaleY - 1.5, 3, 3); });
+
+                ctx.fillStyle = colors[2];
+                ctx.fillRect(startX + player.x * scaleX - 2.5, startY + player.y * scaleY - 2.5, 5, 5);
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'; ctx.lineWidth = 1;
+                const viewX = startX + Math.max(0, camera.x) * scaleX; const viewY = startY + Math.max(0, camera.y) * scaleY;
+                const viewW = Math.min(width, WORLD_WIDTH) * scaleX; const viewH = Math.min(height, WORLD_HEIGHT) * scaleY;
+                ctx.strokeRect(viewX, viewY, viewW, viewH);
+            }
+
+            function drawHearts(ctx) {
+                if (!isPlaying) return;
+                const startX = 35;
+                const startY = 75;
+                const size = 3;
+
+                for (let i = 0; i < 5; i++) {
+                    let hpVal = player.health - (i * 20);
+                    let sprite = heartEmptySprite;
+                    if (hpVal >= 20) sprite = heartFullSprite;
+                    else if (hpVal >= 10) sprite = heartHalfSprite;
+                    drawSprite(ctx, sprite, startX + i * 32, startY, size);
+                }
+            }
+
+            function drawCrosshair(ctx) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'; ctx.lineWidth = 2; ctx.beginPath();
+                ctx.arc(mouse.x, mouse.y, 10, 0, Math.PI * 2);
+                ctx.moveTo(mouse.x - 15, mouse.y); ctx.lineTo(mouse.x + 15, mouse.y);
+                ctx.moveTo(mouse.x, mouse.y - 15); ctx.lineTo(mouse.x, mouse.y + 15);
+                ctx.stroke();
+            }
+
+            // --- MAIN RENDER LOOP (Y-SORTED) ---
+            function draw() {
+                ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, width, height);
+
+                ctx.save(); ctx.translate(-camera.x, -camera.y);
+
+                // 1. Draw floor
+                drawFloor(ctx);
+
+                // 2. Collect all objects for Z-index sorting (Y-Sorting)
+                let drawables = [];
+                walls.forEach(w => drawables.push({ type: 'wall', y: w.y + w.h, item: w }));
+                pickups.forEach(p => drawables.push({ type: 'pickup', y: p.y + 10, item: p }));
+                enemies.forEach(e => drawables.push({ type: 'enemy', y: e.y + e.radius, item: e }));
+                drawables.push({ type: 'player', y: player.y + player.radius, item: player });
+
+                // Sort by their vertical position to simulate depth
+                drawables.sort((a, b) => a.y - b.y);
+
+                // 3. Draw sorted objects
+                drawables.forEach(d => {
+                    if (d.type === 'wall') drawWall(ctx, d.item);
+                    else if (d.type === 'pickup') d.item.draw(ctx);
+                    else if (d.type === 'enemy') d.item.draw(ctx);
+                    else if (d.type === 'player') d.item.draw(ctx);
+                });
+
+                // 4. Draw Effects over everything
+                particles.forEach(p => p.draw(ctx));
+                bullets.forEach(b => b.draw(ctx));
+
+                // 5. Boundaries (Thick wooden perimeter)
+                ctx.strokeStyle = '#5c3a21'; ctx.lineWidth = 10; ctx.strokeRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+                ctx.restore();
+
+                drawMinimap(ctx);
+                drawHearts(ctx);
+                drawCrosshair(ctx);
+            }
+
+            function gameLoop(timestamp) {
+                if (!isPlaying) return;
+                if (isPaused) {
+                    lastTime = timestamp;
+                    requestAnimationFrame(gameLoop);
+                    return;
+                }
+
+                let dt = (timestamp - lastTime) / 1000;
+                if (dt > 0.1) dt = 0.1;
+                lastTime = timestamp;
+
+                update(dt);
+                draw();
+                requestAnimationFrame(gameLoop);
+            }
+
+            function drawMenuArt(ctx) {
+                const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+                bgGrad.addColorStop(0, '#2b0036');
+                bgGrad.addColorStop(1, '#000000');
+                ctx.fillStyle = bgGrad;
+                ctx.fillRect(0, 0, width, height);
+
+                ctx.fillStyle = '#e8cfa6'; // Sand ground
+                ctx.fillRect(0, height - 150, width, 150);
+                ctx.strokeStyle = '#5c3a21';
+                ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.moveTo(0, height - 150); ctx.lineTo(width, height - 150); ctx.stroke();
+
+                ctx.fillStyle = '#fff';
+                for (let i = 0; i < 80; i++) {
+                    let sx = (Math.sin(i * 1234) * 0.5 + 0.5) * width;
+                    let sy = (Math.cos(i * 4321) * 0.5 + 0.5) * (height - 150);
+                    ctx.globalAlpha = Math.sin(Date.now() / 1000 + i) * 0.5 + 0.5;
+                    ctx.fillRect(sx, sy, i % 3 + 1, i % 3 + 1);
+                }
+                ctx.globalAlpha = 1;
+
+                const centerY = height - 150;
+
+                ctx.save();
+                ctx.translate(width / 2, centerY - 20);
+                ctx.scale(8, 8);
+                if (selectedCharacter === 2) {
+                    drawPlayerCharacterAlt(ctx, 'MACHINE_GUN', Date.now() / 200, 0);
+                } else {
+                    drawPlayerCharacter(ctx, 'MACHINE_GUN', Date.now() / 200, 0);
+                }
+                ctx.restore();
+            }
+
+            function menuLoop() {
+                if (!isPlaying) {
+                    drawMenuArt(ctx);
+                    drawCrosshair(ctx);
+                    requestAnimationFrame(menuLoop);
+                }
+            }
+
+            function showScreen(screenElem) {
+                mainMenuScreen.classList.add('hidden');
+                gameOverScreen.classList.add('hidden');
+                levelTransitionScreen.classList.add('hidden');
+                gameWinScreen.classList.add('hidden');
+                highScoreScreen.classList.add('hidden');
+                settingsScreen.classList.add('hidden');
+                creditsScreen.classList.add('hidden');
+                pauseScreen.classList.add('hidden');
+                screenElem.classList.remove('hidden');
+            }
+
+            function pauseGame() {
+                isPaused = true;
+                menus.classList.remove('hidden');
+                renderPauseMusicTracks();
+                showScreen(pauseScreen);
+            }
+
+            function resumeGame() {
+                isPaused = false;
+                menus.classList.add('hidden');
+                lastTime = performance.now();
+            }
+
+            function abandonGame() {
+                isPaused = false;
+                isPlaying = false;
+                hud.classList.add('hidden');
+                menus.classList.remove('hidden');
+                showScreen(mainMenuScreen);
+                requestAnimationFrame(menuLoop);
+            }
+
+            startBtn.addEventListener('click', () => {
+                initGame();
+            });
+            resumeBtn.addEventListener('click', resumeGame);
+            abandonBtn.addEventListener('click', abandonGame);
+
+            nextLevelBtn.addEventListener('click', () => {
+                currentLevelIdx++;
+                startLevel();
+                menus.classList.add('hidden');
+                hud.classList.remove('hidden');
+                isPlaying = true;
+                lastTime = performance.now();
+                requestAnimationFrame(gameLoop);
+            });
+
+            highScoreBtn.addEventListener('click', () => {
+                updateHighScoresList();
+                showScreen(highScoreScreen);
+            });
+
+            settingsBtn.addEventListener('click', () => {
+                renderMusicTracks();
+                showScreen(settingsScreen);
+            });
+            creditsBtn.addEventListener('click', () => showScreen(creditsScreen));
+
+            backToMenuBtns.forEach(btn => {
+                btn.addEventListener('click', () => showScreen(mainMenuScreen));
+            });
+
+            // --- Music Volume Slider ---
+            const musicVolumeSlider = document.getElementById('musicVolumeSlider');
+            const musicVolumeValue = document.getElementById('musicVolumeValue');
+            musicVolumeSlider.addEventListener('input', (e) => {
+                musicVolume = parseInt(e.target.value);
+                musicVolumeValue.innerText = musicVolume;
+                bgMusic.volume = musicVolume / 100;
+                if (musicVolume > 0 && audioInitialized && bgMusic.paused) {
+                    bgMusic.play().catch(err => console.log(err));
+                } else if (musicVolume === 0) {
+                    bgMusic.pause();
+                }
+            });
+
+            // --- SFX Volume Slider ---
+            const sfxVolumeSlider = document.getElementById('sfxVolumeSlider');
+            const sfxVolumeValue = document.getElementById('sfxVolumeValue');
+            sfxVolumeSlider.addEventListener('input', (e) => {
+                sfxVolume = parseInt(e.target.value);
+                sfxVolumeValue.innerText = sfxVolume;
+            });
+
+            // --- Music Track Selection ---
+            function renderMusicTracks() {
+                const list = document.getElementById('musicTrackList');
+                list.innerHTML = '';
+                MUSIC_TRACKS.forEach((track, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'music-track' + (idx === currentTrackIdx ? ' active' : '');
+                    div.innerHTML = `<span class="track-indicator"></span><span class="track-name">${track.name}</span>`;
+                    div.addEventListener('click', () => {
+                        currentTrackIdx = idx;
+                        bgMusic.src = track.file;
+                        bgMusic.volume = musicVolume / 100;
+                        if (musicVolume > 0 && audioInitialized) {
+                            bgMusic.play().catch(err => console.log(err));
+                        }
+                        renderMusicTracks();
+                    });
+                    list.appendChild(div);
+                });
+            }
+
+            // --- Pause Menu Sliders & Selection ---
+            const pauseMusicVolumeSlider = document.getElementById('pauseMusicVolumeSlider');
+            const pauseMusicVolumeValue = document.getElementById('pauseMusicVolumeValue');
+            pauseMusicVolumeSlider.addEventListener('input', (e) => {
+                musicVolume = parseInt(e.target.value);
+                pauseMusicVolumeValue.innerText = musicVolume;
+                musicVolumeSlider.value = musicVolume; // sync with settings
+                musicVolumeValue.innerText = musicVolume; // sync with settings
+                bgMusic.volume = musicVolume / 100;
+                if (musicVolume > 0 && audioInitialized && bgMusic.paused) {
+                    bgMusic.play().catch(err => console.log(err));
+                } else if (musicVolume === 0) {
+                    bgMusic.pause();
+                }
+            });
+
+            const pauseSfxVolumeSlider = document.getElementById('pauseSfxVolumeSlider');
+            const pauseSfxVolumeValue = document.getElementById('pauseSfxVolumeValue');
+            pauseSfxVolumeSlider.addEventListener('input', (e) => {
+                sfxVolume = parseInt(e.target.value);
+                pauseSfxVolumeValue.innerText = sfxVolume;
+                sfxVolumeSlider.value = sfxVolume; // sync with settings
+                sfxVolumeValue.innerText = sfxVolume; // sync with settings
+            });
+
+            function renderPauseMusicTracks() {
+                const list = document.getElementById('pauseMusicTrackList');
+                list.innerHTML = '';
+                MUSIC_TRACKS.forEach((track, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'music-track' + (idx === currentTrackIdx ? ' active' : '');
+                    div.innerHTML = `<span class="track-indicator"></span><span class="track-name">${track.name}</span>`;
+                    div.addEventListener('click', () => {
+                        currentTrackIdx = idx;
+                        bgMusic.src = track.file;
+                        bgMusic.volume = musicVolume / 100;
+                        if (musicVolume > 0 && audioInitialized) {
+                            bgMusic.play().catch(err => console.log(err));
+                        }
+                        renderPauseMusicTracks();
+                    });
+                    list.appendChild(div);
+                });
+            }
+
+            // Sync main menu sliders to pause menu sliders, and vice versa when changed
+            musicVolumeSlider.addEventListener('input', (e) => {
+                pauseMusicVolumeSlider.value = musicVolume;
+                pauseMusicVolumeValue.innerText = musicVolume;
+            });
+            sfxVolumeSlider.addEventListener('input', (e) => {
+                pauseSfxVolumeSlider.value = sfxVolume;
+                pauseSfxVolumeValue.innerText = sfxVolume;
+            });
+
+            toggleLangBtn.addEventListener('click', () => {
+                currentLang = currentLang === 'en' ? 'el' : 'en';
+                localStorage.setItem('pixelSurvivorLang', currentLang);
+                applyLanguage();
+            });
+
+            applyLanguage();
+
+            // --- Character Swapping ---
+            function updateCharNameDisplay() {
+                if (selectedCharacter === 1) {
+                    charNameDisplay.innerText = i18n[currentLang].char1Name;
+                } else {
+                    charNameDisplay.innerText = i18n[currentLang].char2Name;
+                }
+            }
+
+            prevCharBtn.addEventListener('click', () => {
+                selectedCharacter = selectedCharacter === 1 ? 2 : 1;
+                updateCharNameDisplay();
+            });
+
+            nextCharBtn.addEventListener('click', () => {
+                selectedCharacter = selectedCharacter === 1 ? 2 : 1;
+                updateCharNameDisplay();
+            });
+
+
+            requestAnimationFrame(menuLoop);
+        };
+    </script>
+</body>
+
+</html>
