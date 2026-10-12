@@ -382,10 +382,10 @@
 
     <div id="ui-layer">
         <div id="hud" class="hidden">
-            <div><span id="i18n-scoreLabel">SCORE:</span> <span id="scoreDisplay">0</span></div>
-            <div id="levelInfo"><span id="i18n-levelLabel">LEVEL</span> <span id="levelDisplay">1</span> (<span
-                    id="enemiesRemainingDisplay">100</span> <span id="i18n-leftLabel">Left</span>)</div>
-            <div id="weaponInfo"><span id="i18n-weaponLabel">WEAPON:</span> <span id="weaponName">Pistol</span> <span
+            <div><span data-i18n="scoreHud">SCORE:</span> <span id="scoreDisplay">0</span></div>
+            <div id="levelInfo"><span data-i18n="levelHud">LEVEL</span> <span id="levelDisplay">1</span> (<span
+                    id="enemiesRemainingDisplay">100</span> <span data-i18n="leftHud">Left</span>)</div>
+            <div id="weaponInfo"><span data-i18n="weaponHud">WEAPON:</span> <span id="weaponName">Pistol</span> <span
                     id="weaponTimer"></span></div>
         </div>
 
@@ -393,9 +393,9 @@
 
         <div id="menus">
             <div id="mainMenuScreen">
-                <h1 id="i18n-title" class="main-title">Zombie Apocalypse</h1>
-                <p id="i18n-subtitle" class="main-subtitle">WASD to Move | Mouse to Aim & Shoot | Space/Esc to Pause<br><span
-                        style="color: #888; font-size: 14px;">(Click anywhere to enable audio)</span></p>
+                <h1 data-i18n="title" class="main-title">Zombie Apocalypse</h1>
+                <p class="main-subtitle"><span data-i18n="subtitle">WASD to Move | Mouse to Aim & Shoot | Space/Esc to Pause</span><br><span
+                        data-i18n="clickAudio" style="color: #888; font-size: 14px;">(Click anywhere to enable audio)</span></p>
                 
                 <div class="char-swap-ui">
                     <button id="prevCharBtn" class="char-swap-btn">&lt;</button>
@@ -403,41 +403,41 @@
                     <button id="nextCharBtn" class="char-swap-btn">&gt;</button>
                 </div>
 
-                <button id="startBtn" class="btn-start-game">Start Game</button>
-                <button id="highScoreBtn" class="btn-top-left">High Scores</button>
-                <button id="settingsBtn" class="btn-top-right">Settings</button>
-                <button id="creditsBtn" class="btn-bottom-right">Credits</button>
+                <button id="startBtn" data-i18n="startBtn" class="btn-start-game">Start Game</button>
+                <button id="highScoreBtn" data-i18n="highScoresBtn" class="btn-top-left">High Scores</button>
+                <button id="settingsBtn" data-i18n="settingsBtn" class="btn-top-right">Settings</button>
+                <button id="creditsBtn" data-i18n="creditsBtn" class="btn-bottom-right">Credits</button>
             </div>
 
             <div id="gameOverScreen" class="menu-panel hidden">
-                <h1 id="i18n-gameOverTitle" style="color: #d0021b;">GAME OVER</h1>
+                <h1 data-i18n="gameOverTitle" style="color: #d0021b;">GAME OVER</h1>
                 <p id="gameOverText"></p>
-                <button id="backToMenuBtn1" style="display: block; width: 100%;">Back to Main Menu</button>
+                <button class="back-btn" data-i18n="backMenuBtn" style="display: block; width: 100%;">Back to Main Menu</button>
             </div>
 
             <div id="levelTransitionScreen" class="menu-panel hidden">
-                <h1 id="i18n-levelCompleteTitle" style="color: #7ed321;">LEVEL COMPLETE!</h1>
-                <p id="i18n-hordeRecedes">The horde recedes... for now.</p>
-                <button id="nextLevelBtn" style="display: block; width: 100%;">Next Level</button>
+                <h1 data-i18n="levelCompleteTitle" style="color: #7ed321;">LEVEL COMPLETE!</h1>
+                <p data-i18n="hordeRecedes">The horde recedes... for now.</p>
+                <button id="nextLevelBtn" data-i18n="nextLevelBtn" style="display: block; width: 100%;">Next Level</button>
             </div>
 
             <div id="gameWinScreen" class="menu-panel hidden">
-                <h1 id="i18n-youWonTitle" style="color: #f8e71c;">YOU WON!</h1>
+                <h1 data-i18n="youWonTitle" style="color: #f8e71c;">YOU WON!</h1>
                 <p id="gameWinText"></p>
-                <button id="backToMenuBtn5" style="display: block; width: 100%;">Back to Main Menu</button>
+                <button class="back-btn" data-i18n="backMenuBtn" style="display: block; width: 100%;">Back to Main Menu</button>
             </div>
 
             <div id="highScoreScreen" class="menu-panel hidden">
-                <h1 id="i18n-highScoresTitle">HIGH SCORES</h1>
+                <h1 data-i18n="highScoresTitle">HIGH SCORES</h1>
                 <div id="highScoreList" style="font-size: 24px; margin-bottom: 20px; color: #ffcc00;"></div>
-                <button id="backToMenuBtn2" style="display: block; width: 100%;">Back</button>
+                <button class="back-btn" data-i18n="backBtn" style="display: block; width: 100%;">Back</button>
             </div>
 
             <div id="settingsScreen" class="menu-panel hidden">
-                <h1 id="i18n-settingsTitle">SETTINGS</h1>
+                <h1 data-i18n="settingsTitle">SETTINGS</h1>
 
                 <div class="settings-group">
-                    <label><span class="slider-icon">🎵</span> <span id="i18n-musicVolLabel">Music Volume</span></label>
+                    <label><span class="slider-icon">🎵</span> <span data-i18n="musicVolLabel">Music Volume</span></label>
                     <div class="slider-row">
                         <input type="range" id="musicVolumeSlider" min="0" max="100" value="40">
                         <span class="slider-value" id="musicVolumeValue">40</span>
@@ -445,7 +445,7 @@
                 </div>
 
                 <div class="settings-group">
-                    <label><span class="slider-icon">🔊</span> <span id="i18n-sfxVolLabel">Sound FX</span></label>
+                    <label><span class="slider-icon">🔊</span> <span data-i18n="sfxVolLabel">Sound FX</span></label>
                     <div class="slider-row">
                         <input type="range" id="sfxVolumeSlider" min="0" max="100" value="50">
                         <span class="slider-value" id="sfxVolumeValue">50</span>
@@ -453,27 +453,27 @@
                 </div>
 
                 <div class="settings-group">
-                    <div class="music-select-label"><span class="slider-icon">🎶</span> <span id="i18n-musicSelectLabel">Music Track</span></div>
+                    <div class="music-select-label"><span class="slider-icon">🎶</span> <span data-i18n="musicSelectLabel">Music Track</span></div>
                     <div class="music-track-list" id="musicTrackList">
                         <!-- Populated by JS -->
                     </div>
                 </div>
 
-                <button id="toggleLangBtn" style="display: block; width: 100%;">Language: English</button>
-                <button id="backToMenuBtn3" style="display: block; width: 100%;">Back</button>
+                <button id="toggleLangBtn" data-i18n="langBtn" style="display: block; width: 100%;">Language: English</button>
+                <button class="back-btn" data-i18n="backBtn" style="display: block; width: 100%;">Back</button>
             </div>
 
             <div id="creditsScreen" class="menu-panel hidden">
-                <h1 id="i18n-creditsTitle">CREDITS</h1>
-                <p id="i18n-creditsText" style="font-size: 24px;">Dimit Productions.<br>All Rights Reserved!</p>
-                <button id="backToMenuBtn4" style="display: block; width: 100%;">Back</button>
+                <h1 data-i18n="creditsTitle">CREDITS</h1>
+                <p data-i18n-html="creditsText" style="font-size: 24px;">Dimit Productions.<br>All Rights Reserved!</p>
+                <button class="back-btn" data-i18n="backBtn" style="display: block; width: 100%;">Back</button>
             </div>
 
             <div id="pauseScreen" class="menu-panel hidden">
-                <h1 id="i18n-pauseTitle" style="color: #4a90e2;">PAUSED</h1>
+                <h1 data-i18n="pauseTitle" style="color: #4a90e2;">PAUSED</h1>
                 
                 <div class="settings-group">
-                    <label><span class="slider-icon">🎵</span> <span id="i18n-pauseMusicVolLabel">Music Volume</span></label>
+                    <label><span class="slider-icon">🎵</span> <span data-i18n="musicVolLabel">Music Volume</span></label>
                     <div class="slider-row">
                         <input type="range" id="pauseMusicVolumeSlider" min="0" max="100" value="40">
                         <span class="slider-value" id="pauseMusicVolumeValue">40</span>
@@ -481,7 +481,7 @@
                 </div>
 
                 <div class="settings-group">
-                    <label><span class="slider-icon">🔊</span> <span id="i18n-pauseSfxVolLabel">Sound FX</span></label>
+                    <label><span class="slider-icon">🔊</span> <span data-i18n="sfxVolLabel">Sound FX</span></label>
                     <div class="slider-row">
                         <input type="range" id="pauseSfxVolumeSlider" min="0" max="100" value="50">
                         <span class="slider-value" id="pauseSfxVolumeValue">50</span>
@@ -489,14 +489,14 @@
                 </div>
 
                 <div class="settings-group">
-                    <div class="music-select-label"><span class="slider-icon">🎶</span> <span id="i18n-pauseMusicSelectLabel">Music Track</span></div>
+                    <div class="music-select-label"><span class="slider-icon">🎶</span> <span data-i18n="musicSelectLabel">Music Track</span></div>
                     <div class="music-track-list" id="pauseMusicTrackList">
                         <!-- Populated by JS -->
                     </div>
                 </div>
 
-                <button id="resumeBtn" style="display: block; width: 100%;">Resume Game</button>
-                <button id="abandonBtn" style="display: block; width: 100%;">Abandon Game</button>
+                <button id="resumeBtn" data-i18n="resumeBtn" style="display: block; width: 100%;">Resume Game</button>
+                <button id="abandonBtn" data-i18n="abandonBtn" style="display: block; width: 100%;">Abandon Game</button>
             </div>
         </div>
     </div>
@@ -542,13 +542,21 @@
             const nextCharBtn = document.getElementById('nextCharBtn');
             const charNameDisplay = document.getElementById('charNameDisplay');
 
-            const backToMenuBtns = [
-                document.getElementById('backToMenuBtn1'),
-                document.getElementById('backToMenuBtn2'),
-                document.getElementById('backToMenuBtn3'),
-                document.getElementById('backToMenuBtn4'),
-                document.getElementById('backToMenuBtn5')
-            ];
+            const backToMenuBtns = document.querySelectorAll('.back-btn');
+            const menuScreens = document.querySelectorAll('#menus > div');
+
+            // --- STORAGE (localStorage can throw in some private modes / file:// setups) ---
+            function loadJSON(key, fallback) {
+                try {
+                    const raw = localStorage.getItem(key);
+                    return raw === null ? fallback : JSON.parse(raw);
+                } catch (e) {
+                    return fallback;
+                }
+            }
+            function saveJSON(key, value) {
+                try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable */ }
+            }
 
             // --- I18N DICTIONARY ---
             const i18n = {
@@ -646,49 +654,19 @@
                 }
             };
 
-            let currentLang = localStorage.getItem('pixelSurvivorLang') || 'en';
+            let currentLang = 'en';
+            try { currentLang = localStorage.getItem('pixelSurvivorLang') || 'en'; } catch (e) { /* storage unavailable */ }
+            if (!i18n[currentLang]) currentLang = 'en';
 
             function applyLanguage() {
                 const t = i18n[currentLang];
-                document.getElementById('i18n-title').innerText = t.title;
-                document.getElementById('i18n-subtitle').innerHTML = `${t.subtitle}<br><span style="color: #888; font-size: 14px;">${t.clickAudio}</span>`;
-                startBtn.innerText = t.startBtn;
-                highScoreBtn.innerText = t.highScoresBtn;
-                settingsBtn.innerText = t.settingsBtn;
-                creditsBtn.innerText = t.creditsBtn;
-                document.getElementById('i18n-gameOverTitle').innerText = t.gameOverTitle;
-                document.getElementById('backToMenuBtn1').innerText = t.backMenuBtn;
-                document.getElementById('i18n-levelCompleteTitle').innerText = t.levelCompleteTitle;
-                document.getElementById('i18n-hordeRecedes').innerText = t.hordeRecedes;
-                nextLevelBtn.innerText = t.nextLevelBtn;
-                document.getElementById('i18n-youWonTitle').innerText = t.youWonTitle;
-                document.getElementById('backToMenuBtn5').innerText = t.backMenuBtn;
-                document.getElementById('i18n-highScoresTitle').innerText = t.highScoresTitle;
-                document.getElementById('backToMenuBtn2').innerText = t.backBtn;
-                document.getElementById('i18n-settingsTitle').innerText = t.settingsTitle;
-                document.getElementById('i18n-musicVolLabel').innerText = t.musicVolLabel;
-                document.getElementById('i18n-sfxVolLabel').innerText = t.sfxVolLabel;
-                document.getElementById('i18n-musicSelectLabel').innerText = t.musicSelectLabel;
-                document.getElementById('i18n-pauseMusicVolLabel').innerText = t.musicVolLabel;
-                document.getElementById('i18n-pauseSfxVolLabel').innerText = t.sfxVolLabel;
-                document.getElementById('i18n-pauseMusicSelectLabel').innerText = t.musicSelectLabel;
-                toggleLangBtn.innerText = t.langBtn;
-                document.getElementById('backToMenuBtn3').innerText = t.backBtn;
-                document.getElementById('i18n-creditsTitle').innerText = t.creditsTitle;
-                document.getElementById('i18n-creditsText').innerHTML = t.creditsText;
-                document.getElementById('backToMenuBtn4').innerText = t.backBtn;
-                document.getElementById('i18n-pauseTitle').innerText = t.pauseTitle;
-                resumeBtn.innerText = t.resumeBtn;
-                abandonBtn.innerText = t.abandonBtn;
+                document.documentElement.lang = currentLang;
+                document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t[el.dataset.i18n]; });
+                document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t[el.dataset.i18nHtml]; });
 
                 if (typeof updateCharNameDisplay === 'function') {
                     updateCharNameDisplay();
                 }
-
-                document.getElementById('i18n-scoreLabel').innerText = t.scoreHud;
-                document.getElementById('i18n-levelLabel').innerText = t.levelHud;
-                document.getElementById('i18n-leftLabel').innerText = t.leftHud;
-                document.getElementById('i18n-weaponLabel').innerText = t.weaponHud;
 
                 if (typeof player !== 'undefined' && player.weapon) {
                     weaponNameUI.innerText = t[player.weapon.nameKey];
@@ -706,8 +684,20 @@
                 }
             }
 
+            function loadHighScores() {
+                const highScores = loadJSON('pixelSurvivorScores', []);
+                return Array.isArray(highScores) ? highScores.filter(Number.isFinite) : [];
+            }
+
+            function saveHighScore(newScore) {
+                const highScores = loadHighScores();
+                highScores.push(newScore);
+                highScores.sort((a, b) => b - a);
+                saveJSON('pixelSurvivorScores', highScores.slice(0, 5));
+            }
+
             function updateHighScoresList() {
-                let highScores = JSON.parse(localStorage.getItem('pixelSurvivorScores') || '[]');
+                const highScores = loadHighScores();
                 if (highScores.length === 0) {
                     highScoreList.innerHTML = i18n[currentLang].noScores;
                 } else {
@@ -715,13 +705,20 @@
                 }
             }
 
-            // Disable smoothing for crisp pixel art look
-            ctx.imageSmoothingEnabled = false;
-
+            // width/height are in CSS pixels; the backing store is scaled by devicePixelRatio
+            // so the game stays sharp on high-DPI screens.
             let width, height;
             function resize() {
-                width = canvas.width = window.innerWidth;
-                height = canvas.height = window.innerHeight;
+                const dpr = window.devicePixelRatio || 1;
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = Math.round(width * dpr);
+                canvas.height = Math.round(height * dpr);
+                canvas.style.width = width + 'px';
+                canvas.style.height = height + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                // Resizing resets context state, so re-disable smoothing for crisp pixel art
+                ctx.imageSmoothingEnabled = false;
             }
             window.addEventListener('resize', resize);
             resize();
@@ -731,9 +728,12 @@
             let isPaused = false;
             let score = 0;
             let lastTime = 0;
-            let musicVolume = 40;
-            let sfxVolume = 50;
-            let selectedCharacter = 1;
+
+            // Persisted settings
+            const savedSettings = loadJSON('pixelSurvivorSettings', {});
+            const clampInt = (v, min, max, fallback) => Number.isInteger(v) ? Math.max(min, Math.min(max, v)) : fallback;
+            let musicVolume = clampInt(savedSettings.musicVolume, 0, 100, 40);
+            let sfxVolume = clampInt(savedSettings.sfxVolume, 0, 100, 50);
 
             // --- MUSIC TRACKS ---
             const MUSIC_TRACKS = [
@@ -741,7 +741,7 @@
                 { file: 'assets/audio/One_Final_Strike.mp3', name: 'One Final Strike' },
                 { file: 'assets/audio/The_Iron_Gatekeeper_s_Toll.mp3', name: "The Iron Gatekeeper's Toll" }
             ];
-            let currentTrackIdx = 0;
+            let currentTrackIdx = clampInt(savedSettings.trackIdx, 0, MUSIC_TRACKS.length - 1, 0);
 
             // Level State
             let currentLevelIdx = 0;
@@ -755,6 +755,7 @@
 
             // --- AUDIO SYSTEM ---
             const bgMusic = document.getElementById('bgMusic');
+            bgMusic.src = MUSIC_TRACKS[currentTrackIdx].file;
             bgMusic.volume = musicVolume / 100;
             let audioCtx;
 
@@ -892,13 +893,6 @@
                 SHOTGUN: { id: 'SHOTGUN', nameKey: 'weapSG', fireRate: 0.35, spread: 0.2, bullets: 3, color: '#ff4444', speed: 700 }
             };
 
-            const PICKUP_TYPES = {
-                MACHINE_GUN: { id: 'MACHINE_GUN', type: 'weapon', weapon: WEAPON_TYPES.MACHINE_GUN, color: '#ffaa00' },
-                SHOTGUN: { id: 'SHOTGUN', type: 'weapon', weapon: WEAPON_TYPES.SHOTGUN, color: '#ff4444' },
-                BANDAGE: { id: 'BANDAGE', type: 'health', heal: 10, nameKey: 'itemBandage', color: '#fff' },     // Heals 0.5 heart (10 HP)
-                PAINKILLER: { id: 'PAINKILLER', type: 'health', heal: 20, nameKey: 'itemPainkiller', color: '#ff4444' } // Heals 1 heart (20 HP)
-            };
-
             // Pickups (Guns and Health)
             const mgSprite = [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -932,6 +926,13 @@
                 [0, 0, 0, 1, 1, 0, 0, 0], [0, 0, 1, 4, 4, 1, 0, 0], [0, 1, 4, 4, 4, 4, 1, 0], [0, 1, 4, 4, 4, 4, 1, 0],
                 [0, 1, 6, 6, 6, 6, 1, 0], [0, 1, 6, 6, 6, 6, 1, 0], [0, 0, 1, 6, 6, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 0]
             ];
+
+            const PICKUP_TYPES = {
+                MACHINE_GUN: { id: 'MACHINE_GUN', type: 'weapon', weapon: WEAPON_TYPES.MACHINE_GUN, color: '#ffaa00', sprite: mgSprite, spriteSize: 2.5 },
+                SHOTGUN: { id: 'SHOTGUN', type: 'weapon', weapon: WEAPON_TYPES.SHOTGUN, color: '#ff4444', sprite: sgSprite, spriteSize: 2.5 },
+                BANDAGE: { id: 'BANDAGE', type: 'health', heal: 10, nameKey: 'itemBandage', color: '#fff', sprite: bandageSprite, spriteSize: 3 },     // Heals 0.5 heart (10 HP)
+                PAINKILLER: { id: 'PAINKILLER', type: 'health', heal: 20, nameKey: 'itemPainkiller', color: '#ff4444', sprite: painkillerSprite, spriteSize: 3 } // Heals 1 heart (20 HP)
+            };
 
             // HP Hearts
             const heartFullSprite = [
@@ -998,18 +999,94 @@
 
             // --- 3/4 BRAWL STARS PERSPECTIVE RENDERERS ---
 
-            function drawPlayerCharacter(ctx, weaponId, walkTime, angle) {
+            const WEAPON_SPRITES = { DEFAULT: pistolSprite, MACHINE_GUN: mgSprite, SHOTGUN: sgSprite };
+
+            // Playable characters: shared body layout, per-character colours and details
+            const CHARACTERS = [
+                {
+                    nameKey: 'char1Name', // Commando
+                    colors: { skin: '#e3a06f', pants: '#70644e', boots: '#3b2f2f', shirt: '#1a1a1a', band: '#d0021b' },
+                    drawTorso(ctx) {
+                        // Vest panels
+                        ctx.fillStyle = '#5c6b47';
+                        ctx.fillRect(-14, -10, 8, 18);
+                        ctx.fillRect(2, -10, 10, 18);
+
+                        // Bandolier
+                        ctx.save();
+                        ctx.beginPath(); ctx.moveTo(-10, -10); ctx.lineTo(10, 8);
+                        ctx.lineWidth = 4; ctx.strokeStyle = '#222'; ctx.stroke();
+                        ctx.fillStyle = '#f8e71c';
+                        for (let t = 0; t <= 1; t += 0.3) {
+                            let bx = -10 + (20 * t); let by = -10 + (18 * t);
+                            ctx.translate(bx, by); ctx.rotate(Math.PI / 4); ctx.fillRect(-1.5, -2, 3, 5); ctx.rotate(-Math.PI / 4); ctx.translate(-bx, -by);
+                        }
+                        ctx.restore();
+                    },
+                    drawFace(ctx) {
+                        ctx.fillStyle = 'rgba(0,0,0,0.15)'; // Stubble
+                        ctx.fillRect(-10, -14, 20, 6);
+                    },
+                    drawHeadwear(ctx) {
+                        // Beret
+                        ctx.fillStyle = '#4b5320';
+                        ctx.fillRect(-14, -32, 28, 8);
+                        ctx.fillRect(6, -28, 10, 4); // Flop over eye
+                        ctx.fillStyle = '#f8e71c'; // Gold Badge
+                        ctx.fillRect(2, -30, 4, 3);
+                    },
+                    drawGlove(ctx) {
+                        ctx.fillStyle = '#333';
+                        ctx.fillRect(2, -3, 3, 6);
+                    }
+                },
+                {
+                    nameKey: 'char2Name', // Street Runner
+                    colors: { skin: '#c68642', pants: '#1e3a5f', boots: '#e8e8e8', soles: '#555', shirt: '#ddd', band: '#fff' },
+                    drawTorso(ctx) {
+                        // Hoodie (open front panels) + collar
+                        ctx.fillStyle = '#2563eb';
+                        ctx.fillRect(-14, -10, 10, 18);
+                        ctx.fillRect(4, -10, 10, 18);
+                        ctx.fillStyle = '#1d4ed8';
+                        ctx.fillRect(-14, -12, 28, 4);
+
+                        // Gold chain necklace
+                        ctx.save();
+                        ctx.strokeStyle = '#f8e71c';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(0, -2, 8, 0.3, Math.PI - 0.3);
+                        ctx.stroke();
+                        ctx.fillStyle = '#f8e71c';
+                        ctx.fillRect(-2, 4, 4, 4);
+                        ctx.restore();
+                    },
+                    drawFace() {},
+                    drawHeadwear(ctx) {
+                        // Spiky Hair (blonde)
+                        ctx.fillStyle = '#f5d442';
+                        ctx.fillRect(-12, -34, 24, 8);
+                        ctx.fillRect(-8, -38, 5, 6);
+                        ctx.fillRect(0, -40, 5, 8);
+                        ctx.fillRect(8, -37, 5, 5);
+                        ctx.fillRect(-14, -32, 4, 4);
+                        ctx.fillRect(14, -32, 4, 4);
+                    },
+                    drawGlove(ctx) {
+                        // Fingerless glove
+                        ctx.fillStyle = '#222';
+                        ctx.fillRect(2, -1, 3, 4);
+                    }
+                }
+            ];
+
+            let selectedCharacter = clampInt(savedSettings.character, 0, CHARACTERS.length - 1, 0);
+
+            function drawPlayerCharacter(ctx, character, weaponId, walkTime, angle) {
                 const facingRight = Math.cos(angle) > 0;
                 const walkOffset = Math.sin(walkTime) * 6;
-
-                // Colors
-                const skinColor = '#e3a06f';
-                const vestColor = '#5c6b47';
-                const pantsColor = '#70644e';
-                const bootColor = '#3b2f2f';
-                const shirtColor = '#1a1a1a';
-                const redBand = '#d0021b';
-                const beretColor = '#4b5320';
+                const c = character.colors;
 
                 // SHADOW
                 ctx.fillStyle = 'rgba(0,0,0,0.3)';
@@ -1021,40 +1098,27 @@
                 ctx.save();
                 if (!facingRight) ctx.scale(-1, 1);
 
-                // Legs
-                ctx.fillStyle = pantsColor;
-                ctx.fillRect(-10, 4 - walkOffset, 8, 12); // Back Leg
-                ctx.fillStyle = bootColor;
-                ctx.fillRect(-12, 16 - walkOffset, 12, 6);
-
-                ctx.fillStyle = pantsColor;
-                ctx.fillRect(2, 4 + walkOffset, 8, 12);  // Front Leg
-                ctx.fillStyle = bootColor;
-                ctx.fillRect(0, 16 + walkOffset, 12, 6);
+                // Legs (back, then front)
+                for (const [legX, footX, offset] of [[-10, -12, -walkOffset], [2, 0, walkOffset]]) {
+                    ctx.fillStyle = c.pants;
+                    ctx.fillRect(legX, 4 + offset, 8, 12);
+                    ctx.fillStyle = c.boots;
+                    ctx.fillRect(footX, 16 + offset, 12, 6);
+                    if (c.soles) {
+                        ctx.fillStyle = c.soles;
+                        ctx.fillRect(footX, 20 + offset, 12, 2);
+                    }
+                }
 
                 // Torso
-                ctx.fillStyle = shirtColor;
+                ctx.fillStyle = c.shirt;
                 ctx.fillRect(-12, -10, 24, 18);
-                ctx.fillStyle = vestColor;
-                ctx.fillRect(-14, -10, 8, 18); // Back vest panel
-                ctx.fillRect(2, -10, 10, 18);  // Front vest panel
-
-                // Bandolier
-                ctx.save();
-                ctx.beginPath(); ctx.moveTo(-10, -10); ctx.lineTo(10, 8);
-                ctx.lineWidth = 4; ctx.strokeStyle = '#222'; ctx.stroke();
-                ctx.fillStyle = '#f8e71c';
-                for (let t = 0; t <= 1; t += 0.3) {
-                    let bx = -10 + (20 * t); let by = -10 + (18 * t);
-                    ctx.translate(bx, by); ctx.rotate(Math.PI / 4); ctx.fillRect(-1.5, -2, 3, 5); ctx.rotate(-Math.PI / 4); ctx.translate(-bx, -by);
-                }
-                ctx.restore();
+                character.drawTorso(ctx);
 
                 // Head
-                ctx.fillStyle = skinColor;
+                ctx.fillStyle = c.skin;
                 ctx.fillRect(-10, -28, 20, 20);
-                ctx.fillStyle = 'rgba(0,0,0,0.15)'; // Stubble
-                ctx.fillRect(-10, -14, 20, 6);
+                character.drawFace(ctx);
 
                 // Eyes
                 ctx.fillStyle = '#fff';
@@ -1064,17 +1128,12 @@
                 ctx.fillRect(4, -22, 2, 2);
                 ctx.fillRect(12, -22, 2, 2);
 
-                // Headband
-                ctx.fillStyle = redBand;
+                // Headband / bandana
+                ctx.fillStyle = c.band;
                 ctx.fillRect(-12, -26, 24, 4);
                 ctx.fillRect(-18, -26 + walkOffset * 0.5, 8, 4); // Tail
 
-                // Beret
-                ctx.fillStyle = beretColor;
-                ctx.fillRect(-14, -32, 28, 8);
-                ctx.fillRect(6, -28, 10, 4); // Flop over eye
-                ctx.fillStyle = '#f8e71c'; // Gold Badge
-                ctx.fillRect(2, -30, 4, 3);
+                character.drawHeadwear(ctx);
 
                 ctx.restore();
 
@@ -1085,135 +1144,17 @@
                 if (!facingRight) ctx.scale(1, -1); // Keep gun from turning upside down
 
                 // Gun Arm (Back arm)
-                ctx.fillStyle = skinColor;
+                ctx.fillStyle = c.skin;
                 ctx.fillRect(-6, -4, 16, 6);
 
                 // Gun
                 ctx.translate(16, 0);
-                if (weaponId === 'MACHINE_GUN') drawSprite(ctx, mgSprite, 0, 0, 2);
-                else if (weaponId === 'SHOTGUN') drawSprite(ctx, sgSprite, 0, 0, 2);
-                else drawSprite(ctx, pistolSprite, 0, 0, 2);
+                drawSprite(ctx, WEAPON_SPRITES[weaponId] || pistolSprite, 0, 0, 2);
 
                 // Hand (Front hand over gun)
-                ctx.fillStyle = skinColor;
+                ctx.fillStyle = c.skin;
                 ctx.fillRect(2, -3, 6, 6);
-                ctx.fillStyle = '#333'; // Glove
-                ctx.fillRect(2, -3, 3, 6);
-
-                ctx.restore();
-            }
-
-            function drawPlayerCharacterAlt(ctx, weaponId, walkTime, angle) {
-                const facingRight = Math.cos(angle) > 0;
-                const walkOffset = Math.sin(walkTime) * 6;
-
-                // Colors - Urban Street style
-                const skinColor = '#c68642';
-                const hoodieColor = '#2563eb';
-                const jeansColor = '#1e3a5f';
-                const sneakerColor = '#e8e8e8';
-                const tshirtColor = '#ddd';
-                const bandanaColor = '#fff';
-                const hairColor = '#f5d442';
-
-                // SHADOW
-                ctx.fillStyle = 'rgba(0,0,0,0.3)';
-                ctx.beginPath();
-                ctx.ellipse(0, 18, 16, 6, 0, 0, Math.PI * 2);
-                ctx.fill();
-
-                // --- BODY (Upright) ---
-                ctx.save();
-                if (!facingRight) ctx.scale(-1, 1);
-
-                // Legs
-                ctx.fillStyle = jeansColor;
-                ctx.fillRect(-10, 4 - walkOffset, 8, 12);
-                ctx.fillStyle = sneakerColor;
-                ctx.fillRect(-12, 16 - walkOffset, 12, 6);
-                ctx.fillStyle = '#555';
-                ctx.fillRect(-12, 20 - walkOffset, 12, 2);
-
-                ctx.fillStyle = jeansColor;
-                ctx.fillRect(2, 4 + walkOffset, 8, 12);
-                ctx.fillStyle = sneakerColor;
-                ctx.fillRect(0, 16 + walkOffset, 12, 6);
-                ctx.fillStyle = '#555';
-                ctx.fillRect(0, 20 + walkOffset, 12, 2);
-
-                // Torso - T-shirt base
-                ctx.fillStyle = tshirtColor;
-                ctx.fillRect(-12, -10, 24, 18);
-
-                // Hoodie (open front panels)
-                ctx.fillStyle = hoodieColor;
-                ctx.fillRect(-14, -10, 10, 18);
-                ctx.fillRect(4, -10, 10, 18);
-                // Hoodie collar
-                ctx.fillStyle = '#1d4ed8';
-                ctx.fillRect(-14, -12, 28, 4);
-
-                // Gold chain necklace
-                ctx.save();
-                ctx.strokeStyle = '#f8e71c';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(0, -2, 8, 0.3, Math.PI - 0.3);
-                ctx.stroke();
-                ctx.fillStyle = '#f8e71c';
-                ctx.fillRect(-2, 4, 4, 4);
-                ctx.restore();
-
-                // Head
-                ctx.fillStyle = skinColor;
-                ctx.fillRect(-10, -28, 20, 20);
-
-                // Eyes
-                ctx.fillStyle = '#fff';
-                ctx.fillRect(2, -22, 5, 3);
-                ctx.fillRect(10, -22, 5, 3);
-                ctx.fillStyle = '#000';
-                ctx.fillRect(4, -22, 2, 2);
-                ctx.fillRect(12, -22, 2, 2);
-
-                // Bandana
-                ctx.fillStyle = bandanaColor;
-                ctx.fillRect(-12, -26, 24, 4);
-                ctx.fillRect(-18, -26 + walkOffset * 0.5, 8, 4);
-
-                // Spiky Hair (blonde)
-                ctx.fillStyle = hairColor;
-                ctx.fillRect(-12, -34, 24, 8);
-                ctx.fillRect(-8, -38, 5, 6);
-                ctx.fillRect(0, -40, 5, 8);
-                ctx.fillRect(8, -37, 5, 5);
-                ctx.fillRect(-14, -32, 4, 4);
-                ctx.fillRect(14, -32, 4, 4);
-
-                ctx.restore();
-
-                // --- GUN AND ARMS ---
-                ctx.save();
-                ctx.translate(0, -6);
-                ctx.rotate(angle);
-                if (!facingRight) ctx.scale(1, -1);
-
-                // Gun Arm
-                ctx.fillStyle = skinColor;
-                ctx.fillRect(-6, -4, 16, 6);
-
-                // Gun
-                ctx.translate(16, 0);
-                if (weaponId === 'MACHINE_GUN') drawSprite(ctx, mgSprite, 0, 0, 2);
-                else if (weaponId === 'SHOTGUN') drawSprite(ctx, sgSprite, 0, 0, 2);
-                else drawSprite(ctx, pistolSprite, 0, 0, 2);
-
-                // Hand
-                ctx.fillStyle = skinColor;
-                ctx.fillRect(2, -3, 6, 6);
-                // Fingerless glove
-                ctx.fillStyle = '#222';
-                ctx.fillRect(2, -1, 3, 4);
+                character.drawGlove(ctx);
 
                 ctx.restore();
             }
@@ -1341,16 +1282,21 @@
 
             // --- ENVIRONMENT RENDERERS ---
 
-            function drawFloor(ctx) {
+            // Only the part of the floor inside the camera view is drawn
+            function drawFloor(ctx, view) {
+                const left = Math.max(0, view.left), right = Math.min(WORLD_WIDTH, view.right);
+                const top = Math.max(0, view.top), bottom = Math.min(WORLD_HEIGHT, view.bottom);
+                if (left >= right || top >= bottom) return;
+
                 ctx.fillStyle = '#e8cfa6'; // Desert sand color (Brawl Stars vibe)
-                ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+                ctx.fillRect(left, top, right - left, bottom - top);
 
                 const gridSize = 100;
                 ctx.strokeStyle = '#d4b685';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
-                for (let x = 0; x <= WORLD_WIDTH; x += gridSize) { ctx.moveTo(x, 0); ctx.lineTo(x, WORLD_HEIGHT); }
-                for (let y = 0; y <= WORLD_HEIGHT; y += gridSize) { ctx.moveTo(0, y); ctx.lineTo(WORLD_WIDTH, y); }
+                for (let x = Math.ceil(left / gridSize) * gridSize; x <= right; x += gridSize) { ctx.moveTo(x, top); ctx.lineTo(x, bottom); }
+                for (let y = Math.ceil(top / gridSize) * gridSize; y <= bottom; y += gridSize) { ctx.moveTo(left, y); ctx.lineTo(right, y); }
                 ctx.stroke();
             }
 
@@ -1470,11 +1416,7 @@
                 draw(ctx) {
                     ctx.save();
                     ctx.translate(this.x, this.y);
-                    if (selectedCharacter === 2) {
-                        drawPlayerCharacterAlt(ctx, this.weapon.id, this.walkTime, this.angle);
-                    } else {
-                        drawPlayerCharacter(ctx, this.weapon.id, this.walkTime, this.angle);
-                    }
+                    drawPlayerCharacter(ctx, CHARACTERS[selectedCharacter], this.weapon.id, this.walkTime, this.angle);
                     ctx.restore();
                 }
             }
@@ -1583,13 +1525,7 @@
                     ctx.globalAlpha = 1;
 
                     // Draw Specific Graphic
-                    let sprite, size;
-                    if (this.def.id === 'MACHINE_GUN') { sprite = mgSprite; size = 2.5; }
-                    else if (this.def.id === 'SHOTGUN') { sprite = sgSprite; size = 2.5; }
-                    else if (this.def.id === 'BANDAGE') { sprite = bandageSprite; size = 3; }
-                    else if (this.def.id === 'PAINKILLER') { sprite = painkillerSprite; size = 3; }
-
-                    if (sprite) drawSprite(ctx, sprite, 0, 0, size);
+                    drawSprite(ctx, this.def.sprite, 0, 0, this.def.spriteSize);
 
                     ctx.restore();
                 }
@@ -1697,12 +1633,7 @@
                 menus.classList.remove('hidden');
                 showScreen(gameOverScreen);
                 gameOverText.innerHTML = `${i18n[currentLang].survivedText}<br>${i18n[currentLang].finalScore} <strong>${score}</strong>`;
-
-                let highScores = JSON.parse(localStorage.getItem('pixelSurvivorScores') || '[]');
-                highScores.push(score);
-                highScores.sort((a, b) => b - a);
-                highScores = highScores.slice(0, 5);
-                localStorage.setItem('pixelSurvivorScores', JSON.stringify(highScores));
+                saveHighScore(score);
 
                 requestAnimationFrame(menuLoop);
             }
@@ -1718,15 +1649,20 @@
                 } else {
                     showScreen(gameWinScreen);
                     gameWinText.innerHTML = `${i18n[currentLang].clearedAll}<br>${i18n[currentLang].finalScore} <strong>${score}</strong>`;
-
-                    let highScores = JSON.parse(localStorage.getItem('pixelSurvivorScores') || '[]');
-                    highScores.push(score);
-                    highScores.sort((a, b) => b - a);
-                    highScores = highScores.slice(0, 5);
-                    localStorage.setItem('pixelSurvivorScores', JSON.stringify(highScores));
+                    saveHighScore(score);
                 }
 
                 requestAnimationFrame(menuLoop);
+            }
+
+            // Only touch the DOM when the weapon HUD actually changes (not every frame)
+            const weaponHudState = { name: null, color: null, timer: null };
+            function updateWeaponHud() {
+                const name = i18n[currentLang][player.weapon.nameKey];
+                const timer = player.powerupTimer > 0 ? `(${Math.ceil(player.powerupTimer)}s)` : "";
+                if (name !== weaponHudState.name) weaponNameUI.innerText = weaponHudState.name = name;
+                if (player.weapon.color !== weaponHudState.color) weaponNameUI.style.color = weaponHudState.color = player.weapon.color;
+                if (timer !== weaponHudState.timer) weaponTimerUI.innerText = weaponHudState.timer = timer;
             }
 
             function update(dt) {
@@ -1735,9 +1671,7 @@
 
                 const currentLevel = LEVELS[currentLevelIdx];
 
-                weaponNameUI.innerText = i18n[currentLang][player.weapon.nameKey];
-                weaponNameUI.style.color = player.weapon.color;
-                weaponTimerUI.innerText = player.powerupTimer > 0 ? `(${Math.ceil(player.powerupTimer)}s)` : "";
+                updateWeaponHud();
 
                 if (enemiesSpawned < currentLevel.enemiesTotal) {
                     spawnTimer += dt * 1000;
@@ -1897,14 +1831,20 @@
 
                 ctx.save(); ctx.translate(-camera.x, -camera.y);
 
-                // 1. Draw floor
-                drawFloor(ctx);
+                // Visible world area; things outside it (plus a margin for sprites) are skipped
+                const view = { left: camera.x, top: camera.y, right: camera.x + width, bottom: camera.y + height };
+                const margin = 100;
+                const inView = (x1, y1, x2, y2) =>
+                    x2 >= view.left - margin && x1 <= view.right + margin && y2 >= view.top - margin && y1 <= view.bottom + margin;
 
-                // 2. Collect all objects for Z-index sorting (Y-Sorting)
+                // 1. Draw floor
+                drawFloor(ctx, view);
+
+                // 2. Collect all visible objects for Z-index sorting (Y-Sorting)
                 let drawables = [];
-                walls.forEach(w => drawables.push({ type: 'wall', y: w.y + w.h, item: w }));
-                pickups.forEach(p => drawables.push({ type: 'pickup', y: p.y + 10, item: p }));
-                enemies.forEach(e => drawables.push({ type: 'enemy', y: e.y + e.radius, item: e }));
+                walls.forEach(w => { if (inView(w.x, w.y, w.x + w.w, w.y + w.h)) drawables.push({ type: 'wall', y: w.y + w.h, item: w }); });
+                pickups.forEach(p => { if (inView(p.x, p.y, p.x, p.y)) drawables.push({ type: 'pickup', y: p.y + 10, item: p }); });
+                enemies.forEach(e => { if (inView(e.x, e.y, e.x, e.y)) drawables.push({ type: 'enemy', y: e.y + e.radius, item: e }); });
                 drawables.push({ type: 'player', y: player.y + player.radius, item: player });
 
                 // Sort by their vertical position to simulate depth
@@ -1976,11 +1916,7 @@
                 ctx.save();
                 ctx.translate(width / 2, centerY - 20);
                 ctx.scale(8, 8);
-                if (selectedCharacter === 2) {
-                    drawPlayerCharacterAlt(ctx, 'MACHINE_GUN', Date.now() / 200, 0);
-                } else {
-                    drawPlayerCharacter(ctx, 'MACHINE_GUN', Date.now() / 200, 0);
-                }
+                drawPlayerCharacter(ctx, CHARACTERS[selectedCharacter], 'MACHINE_GUN', Date.now() / 200, 0);
                 ctx.restore();
             }
 
@@ -1993,21 +1929,13 @@
             }
 
             function showScreen(screenElem) {
-                mainMenuScreen.classList.add('hidden');
-                gameOverScreen.classList.add('hidden');
-                levelTransitionScreen.classList.add('hidden');
-                gameWinScreen.classList.add('hidden');
-                highScoreScreen.classList.add('hidden');
-                settingsScreen.classList.add('hidden');
-                creditsScreen.classList.add('hidden');
-                pauseScreen.classList.add('hidden');
-                screenElem.classList.remove('hidden');
+                menuScreens.forEach(el => el.classList.toggle('hidden', el !== screenElem));
             }
 
             function pauseGame() {
                 isPaused = true;
                 menus.classList.remove('hidden');
-                renderPauseMusicTracks();
+                renderMusicTracks();
                 showScreen(pauseScreen);
             }
 
@@ -2057,107 +1985,80 @@
                 btn.addEventListener('click', () => showScreen(mainMenuScreen));
             });
 
-            // --- Music Volume Slider ---
-            const musicVolumeSlider = document.getElementById('musicVolumeSlider');
-            const musicVolumeValue = document.getElementById('musicVolumeValue');
-            musicVolumeSlider.addEventListener('input', (e) => {
-                musicVolume = parseInt(e.target.value);
-                musicVolumeValue.innerText = musicVolume;
+            function saveSettings() {
+                saveJSON('pixelSurvivorSettings', { musicVolume, sfxVolume, trackIdx: currentTrackIdx, character: selectedCharacter });
+            }
+
+            // --- Volume Sliders (settings + pause menu share state) ---
+            const musicSliders = [
+                { slider: document.getElementById('musicVolumeSlider'), label: document.getElementById('musicVolumeValue') },
+                { slider: document.getElementById('pauseMusicVolumeSlider'), label: document.getElementById('pauseMusicVolumeValue') }
+            ];
+            const sfxSliders = [
+                { slider: document.getElementById('sfxVolumeSlider'), label: document.getElementById('sfxVolumeValue') },
+                { slider: document.getElementById('pauseSfxVolumeSlider'), label: document.getElementById('pauseSfxVolumeValue') }
+            ];
+
+            function syncSliders(sliders, value) {
+                sliders.forEach(({ slider, label }) => {
+                    slider.value = value;
+                    label.innerText = value;
+                });
+            }
+
+            function setMusicVolume(value) {
+                musicVolume = value;
+                syncSliders(musicSliders, value);
                 bgMusic.volume = musicVolume / 100;
                 if (musicVolume > 0 && audioInitialized && bgMusic.paused) {
                     bgMusic.play().catch(err => console.log(err));
                 } else if (musicVolume === 0) {
                     bgMusic.pause();
                 }
-            });
+                saveSettings();
+            }
 
-            // --- SFX Volume Slider ---
-            const sfxVolumeSlider = document.getElementById('sfxVolumeSlider');
-            const sfxVolumeValue = document.getElementById('sfxVolumeValue');
-            sfxVolumeSlider.addEventListener('input', (e) => {
-                sfxVolume = parseInt(e.target.value);
-                sfxVolumeValue.innerText = sfxVolume;
-            });
+            function setSfxVolume(value) {
+                sfxVolume = value;
+                syncSliders(sfxSliders, value);
+                saveSettings();
+            }
 
-            // --- Music Track Selection ---
+            musicSliders.forEach(({ slider }) => slider.addEventListener('input', e => setMusicVolume(parseInt(e.target.value, 10))));
+            sfxSliders.forEach(({ slider }) => slider.addEventListener('input', e => setSfxVolume(parseInt(e.target.value, 10))));
+            syncSliders(musicSliders, musicVolume);
+            syncSliders(sfxSliders, sfxVolume);
+
+            // --- Music Track Selection (settings + pause menu lists) ---
+            const trackLists = [document.getElementById('musicTrackList'), document.getElementById('pauseMusicTrackList')];
+
+            function selectTrack(idx) {
+                currentTrackIdx = idx;
+                bgMusic.src = MUSIC_TRACKS[idx].file;
+                bgMusic.volume = musicVolume / 100;
+                if (musicVolume > 0 && audioInitialized) {
+                    bgMusic.play().catch(err => console.log(err));
+                }
+                saveSettings();
+                renderMusicTracks();
+            }
+
             function renderMusicTracks() {
-                const list = document.getElementById('musicTrackList');
-                list.innerHTML = '';
-                MUSIC_TRACKS.forEach((track, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'music-track' + (idx === currentTrackIdx ? ' active' : '');
-                    div.innerHTML = `<span class="track-indicator"></span><span class="track-name">${track.name}</span>`;
-                    div.addEventListener('click', () => {
-                        currentTrackIdx = idx;
-                        bgMusic.src = track.file;
-                        bgMusic.volume = musicVolume / 100;
-                        if (musicVolume > 0 && audioInitialized) {
-                            bgMusic.play().catch(err => console.log(err));
-                        }
-                        renderMusicTracks();
+                trackLists.forEach(list => {
+                    list.innerHTML = '';
+                    MUSIC_TRACKS.forEach((track, idx) => {
+                        const div = document.createElement('div');
+                        div.className = 'music-track' + (idx === currentTrackIdx ? ' active' : '');
+                        div.innerHTML = `<span class="track-indicator"></span><span class="track-name">${track.name}</span>`;
+                        div.addEventListener('click', () => selectTrack(idx));
+                        list.appendChild(div);
                     });
-                    list.appendChild(div);
                 });
             }
-
-            // --- Pause Menu Sliders & Selection ---
-            const pauseMusicVolumeSlider = document.getElementById('pauseMusicVolumeSlider');
-            const pauseMusicVolumeValue = document.getElementById('pauseMusicVolumeValue');
-            pauseMusicVolumeSlider.addEventListener('input', (e) => {
-                musicVolume = parseInt(e.target.value);
-                pauseMusicVolumeValue.innerText = musicVolume;
-                musicVolumeSlider.value = musicVolume; // sync with settings
-                musicVolumeValue.innerText = musicVolume; // sync with settings
-                bgMusic.volume = musicVolume / 100;
-                if (musicVolume > 0 && audioInitialized && bgMusic.paused) {
-                    bgMusic.play().catch(err => console.log(err));
-                } else if (musicVolume === 0) {
-                    bgMusic.pause();
-                }
-            });
-
-            const pauseSfxVolumeSlider = document.getElementById('pauseSfxVolumeSlider');
-            const pauseSfxVolumeValue = document.getElementById('pauseSfxVolumeValue');
-            pauseSfxVolumeSlider.addEventListener('input', (e) => {
-                sfxVolume = parseInt(e.target.value);
-                pauseSfxVolumeValue.innerText = sfxVolume;
-                sfxVolumeSlider.value = sfxVolume; // sync with settings
-                sfxVolumeValue.innerText = sfxVolume; // sync with settings
-            });
-
-            function renderPauseMusicTracks() {
-                const list = document.getElementById('pauseMusicTrackList');
-                list.innerHTML = '';
-                MUSIC_TRACKS.forEach((track, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'music-track' + (idx === currentTrackIdx ? ' active' : '');
-                    div.innerHTML = `<span class="track-indicator"></span><span class="track-name">${track.name}</span>`;
-                    div.addEventListener('click', () => {
-                        currentTrackIdx = idx;
-                        bgMusic.src = track.file;
-                        bgMusic.volume = musicVolume / 100;
-                        if (musicVolume > 0 && audioInitialized) {
-                            bgMusic.play().catch(err => console.log(err));
-                        }
-                        renderPauseMusicTracks();
-                    });
-                    list.appendChild(div);
-                });
-            }
-
-            // Sync main menu sliders to pause menu sliders, and vice versa when changed
-            musicVolumeSlider.addEventListener('input', (e) => {
-                pauseMusicVolumeSlider.value = musicVolume;
-                pauseMusicVolumeValue.innerText = musicVolume;
-            });
-            sfxVolumeSlider.addEventListener('input', (e) => {
-                pauseSfxVolumeSlider.value = sfxVolume;
-                pauseSfxVolumeValue.innerText = sfxVolume;
-            });
 
             toggleLangBtn.addEventListener('click', () => {
                 currentLang = currentLang === 'en' ? 'el' : 'en';
-                localStorage.setItem('pixelSurvivorLang', currentLang);
+                try { localStorage.setItem('pixelSurvivorLang', currentLang); } catch (e) { /* storage unavailable */ }
                 applyLanguage();
             });
 
@@ -2165,22 +2066,17 @@
 
             // --- Character Swapping ---
             function updateCharNameDisplay() {
-                if (selectedCharacter === 1) {
-                    charNameDisplay.innerText = i18n[currentLang].char1Name;
-                } else {
-                    charNameDisplay.innerText = i18n[currentLang].char2Name;
-                }
+                charNameDisplay.innerText = i18n[currentLang][CHARACTERS[selectedCharacter].nameKey];
             }
 
-            prevCharBtn.addEventListener('click', () => {
-                selectedCharacter = selectedCharacter === 1 ? 2 : 1;
+            function cycleCharacter(step) {
+                selectedCharacter = (selectedCharacter + step + CHARACTERS.length) % CHARACTERS.length;
                 updateCharNameDisplay();
-            });
+                saveSettings();
+            }
 
-            nextCharBtn.addEventListener('click', () => {
-                selectedCharacter = selectedCharacter === 1 ? 2 : 1;
-                updateCharNameDisplay();
-            });
+            prevCharBtn.addEventListener('click', () => cycleCharacter(-1));
+            nextCharBtn.addEventListener('click', () => cycleCharacter(1));
 
 
             requestAnimationFrame(menuLoop);
