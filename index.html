@@ -394,7 +394,7 @@
         <div id="menus">
             <div id="mainMenuScreen">
                 <h1 id="i18n-title" class="main-title">Zombie Apocalypse</h1>
-                <p id="i18n-subtitle" class="main-subtitle">WASD to Move | Mouse to Aim & Shoot<br><span
+                <p id="i18n-subtitle" class="main-subtitle">WASD to Move | Mouse to Aim & Shoot | Space/Esc to Pause<br><span
                         style="color: #888; font-size: 14px;">(Click anywhere to enable audio)</span></p>
                 
                 <div class="char-swap-ui">
@@ -554,7 +554,7 @@
             const i18n = {
                 en: {
                     title: "Zombie Apocalypse",
-                    subtitle: "WASD to Move | Mouse to Aim & Shoot",
+                    subtitle: "WASD to Move | Mouse to Aim & Shoot | Space/Esc to Pause",
                     clickAudio: "(Click anywhere to enable audio)",
                     startBtn: "Start Game",
                     highScoresBtn: "High Scores",
@@ -595,33 +595,29 @@
                     notifEquipped: "EQUIPPED:",
                     notifHealed: "HEALED:",
                     pts: "PTS",
-                    charSelectTitle: "CHOOSE YOUR FIGHTER",
                     char1Name: "COMMANDO",
-                    char1Desc: "Military veteran.<br>Tactical gear & beret.",
-                    char2Name: "STREET RUNNER",
-                    char2Desc: "Urban survivor.<br>Hoodie & sneakers.",
-                    selectBtn: "SELECT"
+                    char2Name: "STREET RUNNER"
                 },
                 el: {
                     title: "ΑΠΟΚΑΛΥΨΗ ΖΟΜΠΙ",
-                    subtitle: "WASD για κίνηση | Ποντίκι για στόχο/βολή",
+                    subtitle: "WASD για κίνηση | Ποντίκι για στόχο/βολή | Space/Esc για παύση",
                     clickAudio: "(Κάντε κλικ οπουδήποτε για ήχο)",
-                    startBtn: "Εναρξη Παιχνιδιου",
-                    highScoresBtn: "Υψηλα Σκορ",
-                    settingsBtn: "Ρυθμισεις",
-                    creditsBtn: "Συντελεστες",
+                    startBtn: "Έναρξη Παιχνιδιού",
+                    highScoresBtn: "Υψηλά Σκορ",
+                    settingsBtn: "Ρυθμίσεις",
+                    creditsBtn: "Συντελεστές",
                     gameOverTitle: "ΤΕΛΟΣ ΠΑΙΧΝΙΔΙΟΥ",
                     survivedText: "Επέζησες από την ορδή.",
                     finalScore: "Τελικό Σκορ:",
-                    backMenuBtn: "Επιστροφη στο Μενοy",
+                    backMenuBtn: "Επιστροφή στο Μενού",
                     levelCompleteTitle: "ΤΟ ΕΠΙΠΕΔΟ ΟΛΟΚΛΗΡΩΘΗΚΕ!",
                     hordeRecedes: "Η ορδή υποχωρεί... προς το παρόν.",
-                    nextLevelBtn: "Επομενο Επιπεδο",
+                    nextLevelBtn: "Επόμενο Επίπεδο",
                     youWonTitle: "ΚΕΡΔΙΣΕΣ!",
                     clearedAll: "Ολοκλήρωσες όλα τα επίπεδα!",
                     highScoresTitle: "ΥΨΗΛΑ ΣΚΟΡ",
                     noScores: "Κανένα σκορ ακόμα!",
-                    backBtn: "Πισω",
+                    backBtn: "Πίσω",
                     settingsTitle: "ΡΥΘΜΙΣΕΙΣ",
                     musicVolLabel: "Ένταση Μουσικής",
                     sfxVolLabel: "Ήχοι",
@@ -630,8 +626,8 @@
                     creditsTitle: "ΣΥΝΤΕΛΕΣΤΕΣ",
                     creditsText: "Dimit Productions.<br>Με επιφύλαξη παντός δικαιώματος!",
                     pauseTitle: "ΠΑΥΣΗ",
-                    resumeBtn: "Συνεχεια",
-                    abandonBtn: "Εγκαταλειψη",
+                    resumeBtn: "Συνέχεια",
+                    abandonBtn: "Εγκατάλειψη",
                     scoreHud: "ΣΚΟΡ:",
                     levelHud: "ΕΠΙΠΕΔΟ",
                     leftHud: "Απομένουν",
@@ -645,12 +641,8 @@
                     notifEquipped: "ΕΞΟΠΛΙΣΤΗΚΕ:",
                     notifHealed: "ΘΕΡΑΠΕΥΤΗΚΕ:",
                     pts: "ΠΟΝΤΟΙ",
-                    charSelectTitle: "ΔΙΑΛΕΞΕ ΤΟΝ ΜΑΧΗΤΗ ΣΟΥ",
                     char1Name: "ΚΟΜΑΝΤΟ",
-                    char1Desc: "Βετεράνος στρατιώτης.<br>Τακτικός εξοπλισμός & μπερές.",
-                    char2Name: "ΔΡΟΜΕΑΣ",
-                    char2Desc: "Αστικός επιζών.<br>Φούτερ & αθλητικά.",
-                    selectBtn: "ΕΠΙΛΟΓΗ"
+                    char2Name: "ΔΡΟΜΕΑΣ"
                 }
             };
 
@@ -739,7 +731,6 @@
             let isPaused = false;
             let score = 0;
             let lastTime = 0;
-            let musicEnabled = true;
             let musicVolume = 40;
             let sfxVolume = 50;
             let selectedCharacter = 1;
@@ -820,20 +811,29 @@
             const keys = { w: false, a: false, s: false, d: false };
             const mouse = { x: width / 2, y: height / 2, isDown: false };
 
-            window.addEventListener('keydown', e => {
-                if (e.key.toLowerCase() in keys) keys[e.key.toLowerCase()] = true;
+            // Physical key codes, so WASD works on any keyboard layout (e.g. Greek)
+            const KEY_CODES = { KeyW: 'w', KeyA: 'a', KeyS: 's', KeyD: 'd' };
 
-                // Handle Pause key
-                if (e.code === 'Space') {
+            window.addEventListener('keydown', e => {
+                if (e.code in KEY_CODES) keys[KEY_CODES[e.code]] = true;
+
+                // Handle Pause keys
+                if (e.code === 'Space' || e.code === 'Escape') {
                     e.preventDefault(); // Prevents page from scrolling down
-                    if (isPlaying) {
+                    if (isPlaying && !e.repeat) {
                         if (isPaused) resumeGame();
                         else pauseGame();
                     }
                 }
             });
             window.addEventListener('keyup', e => {
-                if (e.key.toLowerCase() in keys) keys[e.key.toLowerCase()] = false;
+                if (e.code in KEY_CODES) keys[KEY_CODES[e.code]] = false;
+            });
+            // Key/mouse releases are missed while the window is unfocused, so reset input and pause
+            window.addEventListener('blur', () => {
+                for (const k in keys) keys[k] = false;
+                mouse.isDown = false;
+                if (isPlaying && !isPaused) pauseGame();
             });
             window.addEventListener('mousemove', e => {
                 mouse.x = e.clientX;
@@ -1604,8 +1604,7 @@
             let pickups = [];
 
             function initGame() {
-                if (!audioInitialized && musicEnabled) { initAudio(); audioInitialized = true; }
-                noteIdx = 0;
+                if (!audioInitialized) { initAudio(); audioInitialized = true; }
                 player = new Player(WORLD_WIDTH / 2, WORLD_HEIGHT / 2);
                 camera = new Camera();
                 score = 0;
@@ -1664,22 +1663,24 @@
 
             function spawnEnemy() {
                 const levelData = LEVELS[currentLevelIdx];
-                const spawnDist = Math.max(width, height) / 2 + 100;
-                let x, y, attempts = 0;
+                const typeKey = levelData.types[Math.floor(Math.random() * levelData.types.length)];
+                const radius = ENEMY_DEFS[typeKey].sizeMult * 4;
+                const minSpawnDist = 300;
+                let spawnDist = Math.max(width, height) / 2 + 100;
 
-                do {
+                // Pick a point on a ring around the player that lies inside the world.
+                // Points outside are rejected (not clamped), so zombies never pop up right next
+                // to a player standing near the edge; the ring shrinks if nothing fits (large screens).
+                for (let attempt = 0; attempt < 30; attempt++) {
                     const angle = Math.random() * Math.PI * 2;
-                    x = player.x + Math.cos(angle) * spawnDist;
-                    y = player.y + Math.sin(angle) * spawnDist;
-                    x = Math.max(0, Math.min(WORLD_WIDTH, x));
-                    y = Math.max(0, Math.min(WORLD_HEIGHT, y));
-                    attempts++;
-                } while (checkWallCollision(x, y, 16) && attempts < 10);
-
-                if (!checkWallCollision(x, y, 16)) {
-                    const typeKey = levelData.types[Math.floor(Math.random() * levelData.types.length)];
-                    enemies.push(new Enemy(x, y, typeKey));
-                    return true;
+                    const x = player.x + Math.cos(angle) * spawnDist;
+                    const y = player.y + Math.sin(angle) * spawnDist;
+                    const inWorld = x >= radius && x <= WORLD_WIDTH - radius && y >= radius && y <= WORLD_HEIGHT - radius;
+                    if (inWorld && !checkWallCollision(x, y, radius)) {
+                        enemies.push(new Enemy(x, y, typeKey));
+                        return true;
+                    }
+                    if (attempt % 10 === 9) spawnDist = Math.max(minSpawnDist, spawnDist * 0.75);
                 }
                 return false;
             }
@@ -1690,6 +1691,7 @@
             }
 
             function gameOver() {
+                if (!isPlaying) return; // Already ended this frame
                 isPlaying = false;
                 hud.classList.add('hidden');
                 menus.classList.remove('hidden');
@@ -1706,6 +1708,7 @@
             }
 
             function levelComplete() {
+                if (!isPlaying) return; // Already ended this frame (e.g. player died)
                 isPlaying = false;
                 hud.classList.add('hidden');
                 menus.classList.remove('hidden');
@@ -1784,6 +1787,7 @@
                 });
 
                 enemies.forEach(enemy => {
+                    if (!isPlaying) return; // Game/level ended earlier this frame
                     enemy.update(dt, player);
 
                     const distToPlayer = Math.hypot(player.x - enemy.x, player.y - enemy.y);
@@ -1805,19 +1809,19 @@
                     }
 
                     bullets.forEach(bullet => {
-                        if (bullet.markedForDeletion) return;
+                        if (bullet.markedForDeletion || !isPlaying || enemy.markedForDeletion) return;
                         const distToBullet = Math.hypot(bullet.x - enemy.x, bullet.y - enemy.y);
                         if (distToBullet < enemy.radius + bullet.radius) {
                             bullet.markedForDeletion = true;
                             enemy.health -= 1;
-                            createExplosion(enemy.x, enemy.y, enemy.palette[5], 5);
+                            createExplosion(enemy.x, enemy.y, enemy.palette.skin, 5);
                             if (enemy.health <= 0) {
                                 enemy.markedForDeletion = true;
                                 score += enemy.scoreValue;
                                 enemiesKilled++;
                                 scoreDisplay.innerText = score;
                                 enemiesRemainingDisplay.innerText = Math.max(0, currentLevel.enemiesTotal - enemiesKilled);
-                                createExplosion(enemy.x, enemy.y, enemy.palette[4], 15);
+                                createExplosion(enemy.x, enemy.y, enemy.palette.blood || enemy.palette.flesh || colors[4], 15);
 
                                 if (enemiesKilled >= currentLevel.enemiesTotal) {
                                     levelComplete();
